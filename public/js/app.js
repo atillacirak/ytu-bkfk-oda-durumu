@@ -50,8 +50,7 @@
   // Sound & Header
   const soundToggleBtn = document.getElementById('sound-toggle-btn');
   const soundIcon = document.getElementById('sound-icon');
-  const ykAccessBtn = document.getElementById('yk-access-btn');
-  const ykBtnText = document.getElementById('yk-btn-text');
+  const ykModeBadge = document.getElementById('yk-mode-badge');
 
   // Hero Actions (Notify & Share)
   const notifyToggleBtn = document.getElementById('notify-toggle-btn');
@@ -103,6 +102,18 @@
   /* --------------------------------------------------------------------------
      Initialization
      -------------------------------------------------------------------------- */
+  function isYkUrl() {
+    const path = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+    const params = new URLSearchParams(window.location.search);
+    return (
+      path === '/yk' ||
+      path === '/admin' ||
+      path === '/yonetim' ||
+      params.has('yk') ||
+      params.has('admin')
+    );
+  }
+
   function init() {
     updateSoundIcon();
     updateNotificationButtonUI();
@@ -110,25 +121,35 @@
     connectSSE();
     startTimeAgoTicker();
 
-    // Check URL parameters for direct YK links (e.g. ?pin=1911 or ?yk)
-    const urlParams = new URLSearchParams(window.location.search);
-    const pinFromUrl = urlParams.get('pin');
-    
-    if (pinFromUrl) {
-      verifyAndEnableAdmin(pinFromUrl, true).then((success) => {
-        if (success) {
-          localStorage.setItem('bkfk_admin_pin', pinFromUrl);
-          // Clean URL without refreshing
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
-      });
-    } else if (urlParams.has('yk') || urlParams.has('admin')) {
-      if (!adminPin) {
+    // Check if user is accessing through the secret YK URL (/yk, /admin, etc.)
+    if (isYkUrl()) {
+      if (ykModeBadge) ykModeBadge.style.display = 'inline-flex';
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const pinFromUrl = urlParams.get('pin');
+
+      if (pinFromUrl) {
+        verifyAndEnableAdmin(pinFromUrl, true).then((success) => {
+          if (success) {
+            localStorage.setItem('bkfk_admin_pin', pinFromUrl);
+            window.history.replaceState({}, document.title, window.location.pathname);
+          } else {
+            openPinDialog();
+          }
+        });
+      } else if (adminPin) {
+        verifyAndEnableAdmin(adminPin, false).then((success) => {
+          if (!success) {
+            openPinDialog();
+          }
+        });
+      } else {
         openPinDialog();
       }
-    } else if (adminPin) {
-      // Check if user already has remembered PIN
-      verifyAndEnableAdmin(adminPin, false);
+    } else {
+      // Normal Public Visitor on "/" -> zero admin UI shown!
+      if (adminPanelSection) adminPanelSection.style.display = 'none';
+      if (ykModeBadge) ykModeBadge.style.display = 'none';
     }
   }
 
@@ -615,20 +636,20 @@
       shareStatusBtn.addEventListener('click', shareRoomStatus);
     }
 
-    // YK Panel Access Button
-    ykAccessBtn.addEventListener('click', () => {
-      if (window.soundFx) window.soundFx.playClick();
-      if (adminPin && adminPanelSection.style.display !== 'none') {
-        adminPanelSection.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        openPinDialog();
-      }
-    });
-
-    // Cancel PIN Dialog
+    // Cancel PIN Dialog (Redirect to root if cancelled on YK route)
     cancelPinBtn.addEventListener('click', () => {
       if (window.soundFx) window.soundFx.playClick();
       pinDialog.close();
+      if (isYkUrl()) {
+        window.location.href = '/';
+      }
+    });
+
+    // Handle Escape key or cancel event on dialog
+    pinDialog.addEventListener('cancel', () => {
+      if (isYkUrl()) {
+        window.location.href = '/';
+      }
     });
 
     // Light-dismiss click outside dialog
@@ -642,6 +663,9 @@
       );
       if (!isInDialog) {
         pinDialog.close();
+        if (isYkUrl()) {
+          window.location.href = '/';
+        }
       }
     });
 
@@ -657,14 +681,14 @@
       }
     });
 
-    // Admin Log Out
+    // Admin Log Out (Redirect to public visitor page)
     adminExitBtn.addEventListener('click', () => {
       if (window.soundFx) window.soundFx.playClick();
       adminPin = '';
       localStorage.removeItem('bkfk_admin_pin');
       adminPanelSection.style.display = 'none';
-      if (ykBtnText) ykBtnText.textContent = 'YK Kontrol';
-      ykAccessBtn.style.borderColor = 'rgba(189, 0, 255, 0.45)';
+      if (ykModeBadge) ykModeBadge.style.display = 'none';
+      window.location.href = '/';
     });
 
     // 1-Touch Super Quick Presets
@@ -722,32 +746,6 @@
       if (window.soundFx) window.soundFx.playClick();
       saveAdminStatus();
     });
-
-    // Global keyboard shortcut: Alt + Y or Ctrl + Shift + K to open YK panel
-    document.addEventListener('keydown', (e) => {
-      if ((e.altKey && (e.key === 'y' || e.key === 'Y')) || (e.ctrlKey && e.shiftKey && (e.key === 'k' || e.key === 'K'))) {
-        e.preventDefault();
-        openPinDialog();
-      }
-    });
-
-    // Easter Egg: Rapidly tapping the logo 3 times opens YK Panel
-    const logoEl = document.querySelector('.brand-logo');
-    let logoClicks = 0;
-    let logoTimer = null;
-    if (logoEl) {
-      logoEl.addEventListener('click', (e) => {
-        logoClicks++;
-        clearTimeout(logoTimer);
-        if (logoClicks >= 3) {
-          logoClicks = 0;
-          e.preventDefault();
-          openPinDialog();
-        } else {
-          logoTimer = setTimeout(() => { logoClicks = 0; }, 1200);
-        }
-      });
-    }
 
     // Global click sound on interactive elements
     document.addEventListener('click', (e) => {

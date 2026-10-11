@@ -70,12 +70,16 @@ npm run dev
 
 ---
 
-## 🔑 YK Yönetim Paneline Erişim
+## 🔑 YK Yönetim Paneline Erişim (Gizli URL)
 
-1. Sağ üst köşedeki **"🛡️ YK Kontrol"** butonuna tıklayın.
-2. PIN Kodunu girin (Varsayılan: `1911`).
-3. *"Bu cihazda beni hatırla"* kutucuğunu işaretlerseniz sonraki girişlerinizde doğrudan hızlı kontrol paneli açılır.
-4. Tek tuşla oda durumunu veya doluluk seviyesini güncelleyin!
+Normal sitede (`/`) hiçbir buton veya yönetim arayüzü görünmez. YK üyeleri özel URL ile erişir:
+
+1. Tarayıcıda **`/yk`** veya **`/admin`** adresine gidin:
+   - Örn: **`http://localhost:3000/yk`** *(Canlıda: `https://siteniz.com/yk`)*
+2. Karşınıza çıkan ekranda **YK PIN Kodunu** girin (Varsayılan: `1911`).
+3. *"Bu cihazda beni hatırla"* seçeneğini işaretlerseniz sonraki girişlerinizde doğrudan yönetim paneli açılır.
+4. Tek dokunuşla odayı Açık/Kapalı yapın veya doluluğu değiştirin!
+5. *"Çıkış Yap ✕"* veya *"Siteye Dön"* butonuna bastığınızda normal öğrenci görünümüne yönlendirilirsiniz.
 
 ---
 

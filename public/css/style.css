@@ -1373,3 +1373,46 @@ details[open] .directions-arrow {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
 }
+
+/* ==========================================================================
+   YK Dedicated URL Mode Badge
+   ========================================================================== */
+.yk-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(189, 0, 255, 0.18);
+  border: 1px solid var(--cyber-purple);
+  padding: 0.4rem 0.95rem;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fff;
+  box-shadow: 0 0 16px rgba(189, 0, 255, 0.35);
+}
+
+.yk-badge-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #bd00ff;
+  box-shadow: 0 0 10px #bd00ff;
+  animation: pingBeacon 2s infinite;
+}
+
+.yk-switch-link {
+  color: var(--cyber-cyan);
+  text-decoration: none;
+  font-size: 0.72rem;
+  margin-left: 0.3rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
+  padding-left: 0.6rem;
+  transition: color var(--transition-fast);
+}
+
+.yk-switch-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}

@@ -42,11 +42,12 @@
           <span id="sound-icon">🔊</span>
         </button>
 
-        <!-- YK PIN / Admin Button -->
-        <button id="yk-access-btn" class="yk-access-btn" title="Yönetim Kurulu Kontrol İstasyonu">
-          <span>🛡️</span>
-          <span id="yk-btn-text">YK Kontrol</span>
-        </button>
+        <!-- YK Mode Indicator (Visible ONLY when accessed via /yk or /admin) -->
+        <div id="yk-mode-badge" class="yk-mode-badge" style="display: none;">
+          <span class="yk-badge-pulse" aria-hidden="true"></span>
+          <span>⚡ YK MODU</span>
+          <a href="/" class="yk-switch-link" title="Öğrenci Görünümüne Dön">Siteye Dön ↗</a>
+        </div>
       </div>
     </header>
 
