@@ -287,6 +287,7 @@
 
       <div class="dev-shortcuts">
         <span class="dev-shortcut-chip" data-sel="body">⬛ Arka Plan</span>
+        <span class="dev-shortcut-chip" data-sel=".crest-text">🏛️ YTÜ Yazısı</span>
         <span class="dev-shortcut-chip" data-sel=".hero-logo-box">🖼️ Logo Kutusu</span>
         <span class="dev-shortcut-chip" data-sel=".bkfk-logo">✨ Logo Görseli</span>
         <span class="dev-shortcut-chip" data-sel=".hero-club-title">👑 Başlık</span>
