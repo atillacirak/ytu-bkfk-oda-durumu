@@ -5,8 +5,8 @@
    ========================================================================== */
 
 :root {
-  --bg-pure: #080503;
-  --panel-bg: #0d0a07;
+  --bg-pure: #100c04;
+  --panel-bg: #161006;
   --gold-primary: #dbab51;
   --gold-light: #e8d098;
   --gold-dim: #735e34;
@@ -126,22 +126,22 @@ body {
 /* Club Title & Subtitle */
 .hero-club-title {
   font-family: var(--font-fantasy);
-  font-size: 2.2rem;
+  font-size: 42px;
   font-weight: 700;
   letter-spacing: 0.15em;
   color: var(--gold-primary);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.35rem;
   line-height: 1.15;
 }
 
 .hero-club-sub {
   font-family: var(--font-fantasy);
-  font-size: 0.95rem;
+  font-size: 1.25rem;
   color: var(--gold-light);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   margin-bottom: 2rem;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 /* Grand Status Banner (No Box, Full Elegance) */
@@ -315,7 +315,7 @@ body {
   font-size: 1.75rem;
 }
 .view-card-mode .hero-club-sub {
-  font-size: 0.85rem;
+  font-size: 1rem;
   margin-bottom: 1.5rem;
 }
 .view-card-mode .status-banner {
