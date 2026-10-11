@@ -177,12 +177,12 @@ body {
 
 /* Occupancy Badge (YER VAR / DOLDU) */
 .occupancy-pill {
-  width: 100%;
-  max-width: 380px;
+  width: 325px;
+  max-width: 325px;
   height: 54px;
   padding: 17px;
   margin-bottom: 4px;
-  border-radius: 6px;
+  border-radius: 9px;
   font-size: 19px;
   font-weight: 600;
   letter-spacing: 0.08em;
