@@ -1,27 +1,29 @@
 /* ==========================================================================
    YTÜ BKFK - Dümdüz Siyah & Fantastik Kulüp Odası Portalı
    Pure Black & Antique Fantasy Theme (Sıfır Neon, Tamamen Sade & Fantastik)
+   V1 (Pencere) & V2 (Tüm Sayfa / Full Page) Destekli
    ========================================================================== */
 
 :root {
   --bg-pure: #000000;
-  --panel-bg: #050505;
+  --panel-bg: #070707;
   --gold-primary: #c5a059;
+  --gold-light: #e8d098;
   --gold-dim: #735e34;
   --gold-border: rgba(197, 160, 89, 0.35);
   --text-ivory: #f5f2eb;
   --text-muted: #8a857b;
 
   /* Heraldic Dark Fantasy Status Colors (No Neon) */
-  --heraldic-open-bg: #0d1e13;
+  --heraldic-open-bg: #0c1a11;
   --heraldic-open-border: #235d37;
-  --heraldic-open-text: #bbf7d0;
+  --heraldic-open-text: #86efac;
 
-  --heraldic-closed-bg: #200a0b;
+  --heraldic-closed-bg: #1f0a0b;
   --heraldic-closed-border: #7f1d1d;
-  --heraldic-closed-text: #fecaca;
+  --heraldic-closed-text: #fca5a5;
 
-  --heraldic-warn-bg: #241407;
+  --heraldic-warn-bg: #261505;
   --heraldic-warn-border: #92400e;
   --heraldic-warn-text: #fde68a;
 
@@ -35,59 +37,77 @@
   padding: 0;
 }
 
-body {
+html, body {
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--bg-pure);
   color: var(--text-ivory);
   font-family: var(--font-text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem 1rem;
   overflow-x: hidden;
 }
 
-/* Center Layout */
-.portal-wrap {
-  width: 100%;
-  max-width: 420px;
+body {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
 }
 
 /* ==========================================================================
-   Main Status Plaque (Sade, Koyu, Fantastik)
+   V2: TÜM SAYFA (FULL PAGE) LAYOUT (Kutu / Pencere Olmayan Tasarım)
    ========================================================================== */
-.status-card {
-  background-color: var(--panel-bg);
-  border: 1px solid var(--gold-border);
-  border-radius: 12px;
-  padding: 2.5rem 1.75rem 2rem;
+.fullpage-container {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2.5rem 1.25rem 2rem;
   text-align: center;
   position: relative;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
-/* Medieval / Fantasy Corner Ornaments */
-.corner-ornament {
-  position: absolute;
-  color: var(--gold-primary);
-  font-size: 0.9rem;
-  line-height: 1;
-  opacity: 0.75;
-  user-select: none;
+/* Top Subtle Heraldic Crest */
+.top-crest {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
 }
-.corner-tl { top: 8px; left: 8px; }
-.corner-tr { top: 8px; right: 8px; }
-.corner-bl { bottom: 8px; left: 8px; }
-.corner-br { bottom: 8px; right: 8px; }
 
-/* Authentic BKFK Transmutation Circle Logo */
-.logo-container {
-  width: 150px;
-  height: 150px;
-  margin: 0 auto 1.25rem;
+.crest-text {
+  font-family: var(--font-fantasy);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+}
+
+.crest-line {
+  width: 48px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  margin-top: 0.2rem;
+}
+
+/* Center Hero Stage */
+.hero-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 480px;
+  padding: 1.5rem 0;
+}
+
+/* Large Majestic BKFK Vector Logo */
+.hero-logo-box {
+  width: 190px;
+  height: 190px;
+  margin: 0 auto 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -100,94 +120,78 @@ body {
   user-select: none;
 }
 
-/* Typography */
-.club-title {
+/* Club Title & Subtitle */
+.hero-club-title {
   font-family: var(--font-fantasy);
-  font-size: 1.75rem;
+  font-size: 2.2rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.15em;
   color: var(--gold-primary);
   margin-bottom: 0.25rem;
+  line-height: 1.15;
 }
 
-.club-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  color: var(--gold-dim);
-  font-size: 0.75rem;
-  margin-bottom: 1.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
+.hero-club-sub {
   font-family: var(--font-fantasy);
+  font-size: 0.95rem;
+  color: var(--gold-light);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  opacity: 0.85;
 }
 
-.club-divider::before,
-.club-divider::after {
-  content: '';
-  display: block;
-  width: 24px;
-  height: 1px;
-  background-color: var(--gold-dim);
-}
-
-/* ==========================================================================
-   Heraldic Status Banner (ODA AÇIK / ODA KAPALI)
-   ========================================================================== */
+/* Grand Status Banner (No Box, Full Elegance) */
 .status-banner {
   width: 100%;
-  padding: 0.9rem 1.25rem;
+  max-width: 380px;
+  padding: 1.15rem 1.5rem;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  margin-bottom: 0.85rem;
+  margin-bottom: 1rem;
   font-family: var(--font-fantasy);
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
 }
 
-/* Open State */
 .status-banner.is-open {
   background-color: var(--heraldic-open-bg);
   border: 1px solid var(--heraldic-open-border);
   color: var(--heraldic-open-text);
 }
 
-/* Closed State */
 .status-banner.is-closed {
   background-color: var(--heraldic-closed-bg);
   border: 1px solid var(--heraldic-closed-border);
   color: var(--heraldic-closed-text);
 }
 
-/* ==========================================================================
-   Occupancy Badge (YER VAR / DOLDU)
-   ========================================================================== */
+/* Occupancy Badge (YER VAR / DOLDU) */
 .occupancy-pill {
   width: 100%;
-  padding: 0.65rem 1rem;
+  max-width: 380px;
+  padding: 0.75rem 1.25rem;
   border-radius: 6px;
-  font-size: 0.88rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  margin-bottom: 1.5rem;
   font-family: var(--font-fantasy);
   transition: all 0.25s ease;
 }
 
 .occupancy-pill.has-space {
-  background-color: rgba(35, 93, 55, 0.15);
-  border: 1px solid rgba(35, 93, 55, 0.4);
+  background-color: rgba(35, 93, 55, 0.18);
+  border: 1px solid rgba(35, 93, 55, 0.45);
   color: #86efac;
 }
 
@@ -203,76 +207,157 @@ body {
   color: #71717a;
 }
 
-/* ==========================================================================
-   Google Maps Location Link (YTÜ Kulüpler Vadisi)
-   ========================================================================== */
+/* Bottom Stage: Location & Timestamp */
+.bottom-stage {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+
 .location-btn {
   width: 100%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.55rem;
-  padding: 0.8rem 1rem;
-  background-color: rgba(255, 255, 255, 0.02);
+  gap: 0.6rem;
+  padding: 0.9rem 1.25rem;
+  background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--gold-border);
-  border-radius: 6px;
+  border-radius: 8px;
   color: var(--text-ivory);
   text-decoration: none;
   font-family: var(--font-text);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 500;
   transition: all 0.2s ease;
-  margin-bottom: 1.25rem;
 }
 
 .location-btn:hover {
-  background-color: rgba(197, 160, 89, 0.08);
+  background-color: rgba(197, 160, 89, 0.12);
   border-color: var(--gold-primary);
   color: #ffffff;
 }
 
 .location-icon {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   line-height: 1;
-  display: inline-flex;
-  align-items: center;
 }
 
 .location-arrow {
   color: var(--gold-primary);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
-/* Minimal Timestamp */
 .update-time {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
+}
+
+/* View Switcher Pill at the very bottom */
+.view-switch-btn {
+  background: transparent;
+  border: none;
+  color: var(--gold-dim);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  margin-top: 0.25rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s;
+}
+.view-switch-btn:hover {
+  color: var(--gold-primary);
 }
 
 /* ==========================================================================
-   YK Admin Panel (Only on /yk or /admin)
+   V1: PENCERE (CARD) MODU (Alternatif Olarak Korunur)
    ========================================================================== */
-.admin-panel {
-  background-color: #080808;
-  border: 1px solid var(--gold-primary);
-  border-radius: 8px;
-  padding: 1.25rem;
+.view-card-mode .fullpage-container {
+  justify-content: center;
+  padding: 1.5rem 1rem;
+}
+.view-card-mode .top-crest {
+  display: none;
+}
+.view-card-mode .hero-stage {
+  background-color: var(--panel-bg);
+  border: 1px solid var(--gold-border);
+  border-radius: 14px;
+  padding: 2.25rem 1.75rem 1.75rem;
+  flex: none;
+  max-width: 420px;
   position: relative;
+}
+.view-card-mode .corner-ornament {
+  display: block;
+}
+.view-card-mode .hero-logo-box {
+  width: 140px;
+  height: 140px;
+  margin-bottom: 1rem;
+}
+.view-card-mode .hero-club-title {
+  font-size: 1.75rem;
+}
+.view-card-mode .hero-club-sub {
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+.view-card-mode .status-banner {
+  font-size: 1.3rem;
+  padding: 0.85rem;
+}
+.view-card-mode .bottom-stage {
+  margin-top: 1rem;
+  max-width: 420px;
+}
+
+/* Corner Ornaments (Visible in Card Mode) */
+.corner-ornament {
+  display: none;
+  position: absolute;
+  color: var(--gold-primary);
+  font-size: 0.9rem;
+  line-height: 1;
+  opacity: 0.75;
+  user-select: none;
+}
+.corner-tl { top: 8px; left: 8px; }
+.corner-tr { top: 8px; right: 8px; }
+.corner-bl { bottom: 8px; left: 8px; }
+.corner-br { bottom: 8px; right: 8px; }
+
+/* ==========================================================================
+   YK Admin Panel (Sadece /yk veya /admin adresinde açılır)
+   ========================================================================== */
+.admin-dock {
+  width: 100%;
+  max-width: 540px;
+  margin-bottom: 1.5rem;
+  background-color: #0a0a0a;
+  border: 1px solid var(--gold-primary);
+  border-radius: 10px;
+  padding: 1.15rem 1.25rem;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.8);
 }
 
 .admin-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.45rem;
   border-bottom: 1px solid rgba(197, 160, 89, 0.2);
 }
 
 .admin-badge {
   font-family: var(--font-fantasy);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   color: var(--gold-primary);
@@ -311,13 +396,13 @@ body {
 }
 
 .yk-btn {
-  padding: 0.65rem 0.5rem;
+  padding: 0.7rem 0.5rem;
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background-color: #121212;
+  background-color: #141414;
   color: #d4d4d8;
   font-family: var(--font-fantasy);
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   cursor: pointer;
@@ -353,7 +438,7 @@ body {
 }
 
 .admin-toast {
-  margin-top: 0.5rem;
+  margin-top: 0.45rem;
   font-size: 0.75rem;
   text-align: center;
   color: var(--gold-primary);
@@ -375,7 +460,7 @@ body {
 }
 
 .pin-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.92);
+  background-color: rgba(0, 0, 0, 0.94);
 }
 
 .pin-box {
@@ -445,4 +530,23 @@ body {
   background-color: var(--gold-primary);
   color: #000000;
   font-weight: 700;
+}
+
+/* Mobile Polish */
+@media (max-width: 480px) {
+  .fullpage-container {
+    padding: 1.75rem 1rem 1.5rem;
+  }
+  .hero-logo-box {
+    width: 160px;
+    height: 160px;
+    margin-bottom: 1.25rem;
+  }
+  .hero-club-title {
+    font-size: 1.85rem;
+  }
+  .status-banner {
+    font-size: 1.35rem;
+    padding: 0.95rem;
+  }
 }

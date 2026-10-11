@@ -5,21 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YTÜ BKFK | Kulüp Odası</title>
   <meta name="description" content="YTÜ Bilim Kurgu ve Fantastik Kurgu Kulübü Odası Canlı Durumu">
-  <link rel="icon" type="image/png" href="/icons/logo.png">
+  <link rel="icon" type="image/svg+xml" href="/icons/logo.svg">
 
   <!-- Google Fonts: Cinzel (Fantasy Serif) & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-  <main class="portal-wrap">
+  <div class="fullpage-container" id="main-container">
 
-    <!-- YK Hızlı Yönetim Paneli (Sadece /yk veya /admin adresinde açılır) -->
-    <section id="admin-panel" class="admin-panel" style="display: none;">
+    <!-- YK Hızlı Yönetim Paneli (Sadece /yk veya /admin adresinde görünür) -->
+    <section id="admin-panel" class="admin-dock" style="display: none;">
       <div class="admin-header">
         <span class="admin-badge">❖ YK YÖNETİMİ ❖</span>
         <button id="admin-exit-btn" type="button" class="btn-exit" title="Siteye Dön">Siteye Dön ✕</button>
@@ -45,22 +45,28 @@
       <div id="admin-toast" class="admin-toast"></div>
     </section>
 
-    <!-- Ana Durum Kartı (Dümdüz siyah, fantastik köşe motifleri) -->
-    <div class="status-card" id="status-card">
-      <!-- Köşe Motifleri -->
+    <!-- Üst Başlık / Arma -->
+    <header class="top-crest">
+      <div class="crest-text">❖ YILDIZ TEKNİK ÜNİVERSİTESİ ❖</div>
+      <div class="crest-line"></div>
+    </header>
+
+    <!-- Ana Gövde (Hero Stage - Kutu/Pencere Olmayan Tam Sayfa) -->
+    <main class="hero-stage" id="hero-stage">
+      <!-- Köşe Motifleri (Pencere modunda aktifleşir) -->
       <span class="corner-ornament corner-tl">❖</span>
       <span class="corner-ornament corner-tr">❖</span>
       <span class="corner-ornament corner-bl">❖</span>
       <span class="corner-ornament corner-br">❖</span>
 
-      <!-- BKFK Rünik Logosu (Şeffaf Vektörel SVG) -->
-      <div class="logo-container">
-        <img src="/icons/logo.svg" alt="YTÜ BKFK Logosu" class="bkfk-logo" width="150" height="150">
+      <!-- Büyük BKFK Rünik Vektörel Logosu -->
+      <div class="hero-logo-box">
+        <img src="/icons/logo.svg" alt="YTÜ BKFK Logosu" class="bkfk-logo" width="190" height="190">
       </div>
 
-      <!-- Başlık -->
-      <h1 class="club-title">YTÜ BKFK</h1>
-      <div class="club-divider">Kulüp Odası</div>
+      <!-- Kulüp Başlığı -->
+      <h1 class="hero-club-title">YTÜ BKFK</h1>
+      <div class="hero-club-sub">Kulüp Odası</div>
 
       <!-- 1. Oda Açık mı / Kapalı mı? -->
       <div class="status-banner" id="status-banner">
@@ -71,7 +77,10 @@
       <div class="occupancy-pill" id="occupancy-pill">
         <span id="occ-text">Doluluk kontrol ediliyor</span>
       </div>
+    </main>
 
+    <!-- Alt Kısım: Konum & Zaman & Görünüm Geçişi -->
+    <footer class="bottom-stage">
       <!-- 3. Konum: Google Maps (YTÜ Kulüpler Vadisi) -->
       <a 
         href="https://www.google.com/maps/search/?api=1&query=YT%C3%9C+Kul%C3%BCpler+Vadisi" 
@@ -85,10 +94,16 @@
         <span class="location-arrow">↗</span>
       </a>
 
-      <!-- Son Güncelleme Zamanı -->
+      <!-- Canlı Durum Zamanı -->
       <div class="update-time" id="update-time">Canlı bağlantı kuruluyor...</div>
-    </div>
-  </main>
+
+      <!-- V1 (Pencere) ile V2 (Tüm Sayfa) Arasında Hızlı Geçiş Düğmesi -->
+      <button id="view-toggle-btn" class="view-switch-btn" type="button" title="Görünüm Modunu Değiştir">
+        ◫ Pencere Görünümüne Geç
+      </button>
+    </footer>
+
+  </div>
 
   <!-- YK PIN Doğrulama Modalı (Sadece /yk veya /admin adresinde açılır) -->
   <dialog id="pin-dialog" class="pin-dialog">

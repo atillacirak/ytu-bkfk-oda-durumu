@@ -42,6 +42,7 @@
   const pinInput = document.getElementById('pin-input');
   const pinError = document.getElementById('pin-error');
   const pinCancelBtn = document.getElementById('pin-cancel-btn');
+  const viewToggleBtn = document.getElementById('view-toggle-btn');
 
   function isYkUrl() {
     const path = window.location.pathname.toLowerCase().replace(/\/+$/, '');
@@ -49,10 +50,41 @@
     return path === '/yk' || path === '/admin' || path === '/yonetim' || params.has('yk') || params.has('admin');
   }
 
+  function enableCardMode(save = true) {
+    document.body.classList.add('view-card-mode');
+    if (viewToggleBtn) viewToggleBtn.textContent = '⛶ Tam Sayfa Görünümüne Geç';
+    if (save) localStorage.setItem('bkfk_view_mode', 'card');
+  }
+
+  function enableFullpageMode(save = true) {
+    document.body.classList.remove('view-card-mode');
+    if (viewToggleBtn) viewToggleBtn.textContent = '◫ Pencere Görünümüne Geç';
+    if (save) localStorage.setItem('bkfk_view_mode', 'fullpage');
+  }
+
+  function toggleViewMode() {
+    if (document.body.classList.contains('view-card-mode')) {
+      enableFullpageMode(true);
+    } else {
+      enableCardMode(true);
+    }
+  }
+
   function init() {
     setupEventListeners();
     connectSSE();
     startTimeAgoInterval();
+
+    // Check saved view preference (default is fullpage)
+    const savedView = localStorage.getItem('bkfk_view_mode');
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewParam = urlParams.get('v') || urlParams.get('view');
+
+    if (savedView === 'card' || viewParam === 'card' || viewParam === '1') {
+      enableCardMode(false);
+    } else {
+      enableFullpageMode(false);
+    }
 
     // Check if on YK route
     if (isYkUrl()) {
@@ -347,6 +379,11 @@
           await verifyPin(entered, true);
         }
       });
+    }
+
+    // Toggle View Mode (Fullpage vs Card)
+    if (viewToggleBtn) {
+      viewToggleBtn.addEventListener('click', toggleViewMode);
     }
   }
 
