@@ -13,8 +13,8 @@
 - **📲 Mobil Uygulama (PWA) Desteği:** Hem Android hem iOS cihazlarda *"Uygulamayı Telefona Yükle"* / *"Ana Ekrana Ekle"* ile tam ekran mobil uygulama olarak çalışır.
 - **📍 Hızlı Konum Bağlantısı:** Tek dokunuşla Google Haritalar üzerinden *YTÜ Kulüpler Vadisi* konumunu açar.
 - **◫ Çift Görünüm Modu:** Tam sayfa görünümü ile pencere (kart) görünümü arasında geçiş yapabilme.
-- **🛡️ Güvenli YK Yönetim Paneli (`/yk`):**
-  - Sadece `/yk` veya `/admin` adresinde açılır; ana sayfada yönetim arayüzü görünmez.
+- **🛡️ Güvenli YK Yönetim Paneli:**
+  - Sadece YK üyelerine özel yönetim adresinde açılır; ana sayfada yönetim arayüzü görünmez.
   - Kriptografik oturum çerezi (cookie) sayesinde YK üyeleri bir kez giriş yaptıktan sonra 1 yıl boyunca şifre sormadan doğrudan işlem yapabilir.
   - Brute-force koruması (Rate Limiting) ve CORS güvenlik katmanları içerir.
 
@@ -42,14 +42,6 @@ ROOM_LOCATION=Davutpaşa Kampüsü, Kulüpler Vadisi
 npm start
 ```
 Tarayıcıda açın: **`http://localhost:3000`**
-
----
-
-## 🔑 YK Yönetim Paneli Kullanımı
-
-1. **`/yk`** adresine gidin (örn. `https://ytu-bkfk-oda-durumu.onrender.com/yk`).
-2. YK PIN kodunu girin (giriş yaptıktan sonra tarayıcı çerezinde şifrelenmiş oturum anahtarı olarak saklanır).
-3. **Oda Durumu** (*AÇIK* / *KAPALI*) ve **Doluluk Durumu** (*YER VAR* / *DOLDU*) seçimini yapıp **Değişiklikleri Kaydet** butonuna basın.
 
 ---
 
