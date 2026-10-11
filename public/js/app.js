@@ -183,7 +183,7 @@
     // 2. Doluluk Durumu (Yer Var mı / Doldu mu?)
     if (!isOpen) {
       occupancyPill.className = 'occupancy-pill is-closed-pill';
-      if (occText) occText.textContent = 'Oda Şuan Kapalı';
+      if (occText) occText.textContent = 'Oda Şu An Kapalı';
     } else if (occupancy === 'full') {
       occupancyPill.className = 'occupancy-pill is-full';
       if (occText) occText.textContent = '✦ DOLDU (Yer Kalmadı) ✦';
