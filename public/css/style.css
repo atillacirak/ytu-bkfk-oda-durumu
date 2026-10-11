@@ -5,27 +5,28 @@
    ========================================================================== */
 
 :root {
+  color-scheme: dark;
   --bg-pure: #100c04;
   --panel-bg: #161006;
   --gold-primary: #dbab51;
-  --gold-light: #e8d098;
-  --gold-dim: #735e34;
-  --gold-border: rgba(219, 171, 81, 0.35);
-  --text-ivory: #f5f2eb;
-  --text-muted: #8a857b;
+  --gold-light: #f3dfa7;
+  --gold-dim: #997433;
+  --gold-border: rgba(219, 171, 81, 0.45);
+  --text-ivory: #faf8f5;
+  --text-muted: #a8a296;
 
-  /* Heraldic Dark Fantasy Status Colors (No Neon) */
-  --heraldic-open-bg: #0c1a11;
-  --heraldic-open-border: #235d37;
-  --heraldic-open-text: #86efac;
+  /* Heraldic Dark Fantasy Status Colors (Rich & Crisp, No Pale Washout) */
+  --heraldic-open-bg: #0d2818;
+  --heraldic-open-border: #16a34a;
+  --heraldic-open-text: #4ade80;
 
-  --heraldic-closed-bg: #1f0a0b;
-  --heraldic-closed-border: #7f1d1d;
-  --heraldic-closed-text: #fca5a5;
+  --heraldic-closed-bg: #2b0b0e;
+  --heraldic-closed-border: #dc2626;
+  --heraldic-closed-text: #f87171;
 
-  --heraldic-warn-bg: #261505;
-  --heraldic-warn-border: #92400e;
-  --heraldic-warn-text: #fde68a;
+  --heraldic-warn-bg: #2e1704;
+  --heraldic-warn-border: #d97706;
+  --heraldic-warn-text: #fbbf24;
 
   --font-fantasy: 'Cinzel', Georgia, serif;
   --font-text: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -45,6 +46,8 @@ html, body {
   font-family: var(--font-text);
   font-size: 18px;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -165,14 +168,16 @@ body {
 
 .status-banner.is-open {
   background-color: var(--heraldic-open-bg);
-  border: 1px solid var(--heraldic-open-border);
+  border: 1.5px solid var(--heraldic-open-border);
   color: var(--heraldic-open-text);
+  box-shadow: 0 0 16px rgba(22, 163, 74, 0.15);
 }
 
 .status-banner.is-closed {
   background-color: var(--heraldic-closed-bg);
-  border: 1px solid var(--heraldic-closed-border);
+  border: 1.5px solid var(--heraldic-closed-border);
   color: var(--heraldic-closed-text);
+  box-shadow: 0 0 16px rgba(220, 38, 38, 0.15);
 }
 
 /* Occupancy Badge (YER VAR / DOLDU) */
@@ -195,21 +200,21 @@ body {
 }
 
 .occupancy-pill.has-space {
-  background-color: rgba(35, 93, 55, 0.18);
-  border: 1px solid rgba(35, 93, 55, 0.45);
-  color: #86efac;
+  background-color: var(--heraldic-open-bg);
+  border: 1.5px solid var(--heraldic-open-border);
+  color: var(--heraldic-open-text);
 }
 
 .occupancy-pill.is-full {
   background-color: var(--heraldic-warn-bg);
-  border: 1px solid var(--heraldic-warn-border);
+  border: 1.5px solid var(--heraldic-warn-border);
   color: var(--heraldic-warn-text);
 }
 
 .occupancy-pill.is-closed-pill {
   background-color: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #71717a;
+  border: 1.5px solid rgba(255, 255, 255, 0.14);
+  color: #a1a1aa;
 }
 
 /* Bottom Stage: Location & Timestamp */
@@ -229,8 +234,8 @@ body {
   height: 51px;
   padding: 0px;
   margin-bottom: 14px;
-  background-color: #120c02;
-  border: 1px solid #dbab51;
+  background-color: #1a1306;
+  border: 1.5px solid #dbab51;
   border-radius: 44px;
   display: inline-flex;
   align-items: center;
@@ -239,14 +244,15 @@ body {
   color: var(--text-ivory);
   text-decoration: none;
   font-family: var(--font-text);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 500;
   transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
 }
 
 .location-btn:hover {
-  background-color: #1c1404;
-  border-color: #f0c36d;
+  background-color: #261a0a;
+  border-color: #f3c468;
   color: #ffffff;
 }
 
