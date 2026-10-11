@@ -526,6 +526,14 @@ body {
   pointer-events: none;
 }
 
+.yk-save-btn.is-saved {
+  background-color: var(--heraldic-open-bg);
+  background-image: linear-gradient(180deg, #1fa357, #136936) !important;
+  border-color: #5be08a;
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(31, 163, 87, 0.35);
+}
+
 .admin-toast {
   margin-top: 0.45rem;
   font-size: 0.75rem;

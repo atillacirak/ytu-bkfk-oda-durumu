@@ -257,7 +257,10 @@
     if (ykBtnSave && !ykBtnSave.classList.contains('is-saving')) {
       const hasChanges = (openVal !== currentStatus.isOpen) || (occVal !== currentStatus.occupancy);
       if (hasChanges) {
-        ykBtnSave.innerHTML = '<span>💾</span><span>Değişiklikleri Kaydet (Bekliyor)</span>';
+        ykBtnSave.classList.remove('is-saved');
+        ykBtnSave.innerHTML = '<span>💾</span><span>Değişiklikleri Kaydet</span>';
+      } else if (ykBtnSave.classList.contains('is-saved')) {
+        ykBtnSave.innerHTML = '<span>✅</span><span>Kaydedildi</span>';
       } else {
         ykBtnSave.innerHTML = '<span>💾</span><span>Değişiklikleri Kaydet</span>';
       }
@@ -305,6 +308,7 @@
     const targetOccupancy = newFields.occupancy || (pendingOccupancy !== null ? pendingOccupancy : currentStatus.occupancy);
 
     if (ykBtnSave) {
+      ykBtnSave.classList.remove('is-saved');
       ykBtnSave.classList.add('is-saving');
       ykBtnSave.innerHTML = '<span>⏳</span><span>Kaydediliyor...</span>';
     }
@@ -333,13 +337,25 @@
         pendingIsOpen = payload.isOpen;
         pendingOccupancy = payload.occupancy;
         renderStatus();
+
+        if (ykBtnSave) {
+          ykBtnSave.classList.remove('is-saving');
+          ykBtnSave.classList.add('is-saved');
+          ykBtnSave.innerHTML = '<span>✅</span><span>Kaydedildi</span>';
+        }
         renderAdminButtons();
       } else {
         showToast(data.message || 'Güncelleme başarısız!');
+        if (ykBtnSave) {
+          ykBtnSave.classList.remove('is-saving');
+        }
         renderAdminButtons();
       }
     } catch {
       showToast('Ağ hatası oluştu!');
+      if (ykBtnSave) {
+        ykBtnSave.classList.remove('is-saving');
+      }
       renderAdminButtons();
     } finally {
       if (ykBtnSave) {
