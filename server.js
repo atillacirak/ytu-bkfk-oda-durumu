@@ -1,12 +1,60 @@
 const express = require('express');
 const cors = require('cors');
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const app = express();
+app.set('trust proxy', 1);
+
 const PORT = process.env.PORT || 3000;
-const ADMIN_PIN = process.env.ADMIN_PIN || '1911';
+const ADMIN_PIN = process.env.ADMIN_PIN || '';
+const FALLBACK_PIN_HASH = '7a7fee17982ff0466c35bfdf95c072db9ed9b5efa0ef25af16c8ce4672e09b6a';
+const SITE_ORIGIN = process.env.SITE_ORIGIN || 'https://ytu-bkfk-oda-durumu.onrender.com';
+
+// Middlewares
+
+// CORS — sadece kendi sitemizden gelen istekler
+app.use(cors({
+  origin: [SITE_ORIGIN, 'http://localhost:3000'],
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'x-admin-pin']
+}));
+
+// Güvenlik başlıkları
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
+
+app.use(express.json({ limit: '10kb' }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Rate Limiters
+
+// PIN doğrulama: 15 dakikada maksimum 10 deneme (brute-force koruması)
+const pinLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 dakika
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Çok fazla hatalı giriş denemesi. 15 dakika bekleyin.' }
+});
+
+// Genel API limiti: dakikada 60 istek
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Çok fazla istek gönderildi. Lütfen bekleyin.' }
+});
+
+app.use('/api/', apiLimiter);
 
 const CLUB_INFO = {
   name: process.env.CLUB_NAME || 'YTÜ BKFK',
@@ -79,12 +127,15 @@ function broadcastStatus() {
   }
 }
 
-// Middlewares
-app.use(cors());
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+// Authentication Helpers
+function hashPin(val) {
+  return crypto.scryptSync(String(val).trim(), 'ytu_bkfk_2026_salt', 32).toString('hex');
+}
 
-// Authentication Helper
+function getValidSessionToken() {
+  return ADMIN_PIN ? hashPin(ADMIN_PIN) : FALLBACK_PIN_HASH;
+}
+
 function verifyPin(req) {
   const pinHeader = req.headers['x-admin-pin'];
   const pinBody = req.body && req.body.pin;
@@ -102,8 +153,20 @@ function verifyPin(req) {
     }
   }
 
-  const pin = pinHeader || pinBody || pinQuery || cookiePin;
-  return pin && String(pin).trim() === String(ADMIN_PIN).trim();
+  const input = pinHeader || pinBody || pinQuery || cookiePin;
+  if (!input) return false;
+
+  const clean = String(input).trim();
+  const validToken = getValidSessionToken();
+
+  // 1. Eğer çerezden/istekten gelen değer zaten hashlenmiş session token ise:
+  if (clean === validToken) return true;
+
+  // 2. Eğer kullanıcı ham PIN girdiyse:
+  if (ADMIN_PIN) {
+    return clean === String(ADMIN_PIN).trim();
+  }
+  return hashPin(clean) === FALLBACK_PIN_HASH;
 }
 
 // Routes
@@ -117,13 +180,13 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-// 2. Verify Admin PIN
-app.post('/api/verify-pin', (req, res) => {
+// 2. Verify Admin PIN (brute-force korumalı)
+app.post('/api/verify-pin', pinLimiter, (req, res) => {
   const isValid = verifyPin(req);
   if (isValid) {
-    const pin = (req.body && req.body.pin) || req.headers['x-admin-pin'] || ADMIN_PIN;
-    res.setHeader('Set-Cookie', `bkfk_admin_pin=${encodeURIComponent(pin)}; Path=/; Max-Age=31536000; SameSite=Lax`);
-    res.json({ success: true, message: 'YK Kimlik Doğrulaması Başarılı' });
+    const sessionToken = getValidSessionToken();
+    res.setHeader('Set-Cookie', `bkfk_admin_pin=${encodeURIComponent(sessionToken)}; Path=/; Max-Age=31536000; SameSite=Lax`);
+    res.json({ success: true, token: sessionToken, message: 'YK Kimlik Doğrulaması Başarılı' });
   } else {
     res.status(401).json({ success: false, message: 'Geçersiz YK PIN Kodu' });
   }
@@ -179,11 +242,17 @@ app.post('/api/status', (req, res) => {
 });
 
 // 4. Server-Sent Events (SSE) Live Feed
+const SSE_MAX_CLIENTS = 100;
+
 app.get('/api/events', (req, res) => {
+  // Bağlantı sayısı sınırı
+  if (sseClients.size >= SSE_MAX_CLIENTS) {
+    return res.status(503).json({ success: false, message: 'Sunucu kapasitesi dolu, kısa süre sonra tekrar deneyin.' });
+  }
+
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.flushHeaders?.();
 
   // Send initial data immediately
@@ -220,7 +289,7 @@ app.get('*', (req, res) => {
 if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`🌌 YTÜ BKFK Oda Durumu Portalı başlatıldı: http://localhost:${PORT}`);
-    console.log(`🔑 YK PIN Kodu: ${ADMIN_PIN}`);
+    console.log(`🔑 YK PIN aktif: ${ADMIN_PIN ? 'Evet (ortam değişkeninden)' : 'UYARI: Varsayılan PIN kullanılıyor!'}`);
   });
 }
 

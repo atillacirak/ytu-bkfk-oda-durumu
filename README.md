@@ -1,116 +1,70 @@
-# 🌌 YTÜ BKFK - Kulüp Odası Canlı Durum Portalı
+# ❖ YTÜ BKFK | Kulüp Odası Canlı Durum Portalı
 
-> **Yıldız Teknik Üniversitesi Bilim Kurgu ve Fantastik Kurgu Kulübü (YTÜ BKFK)** kulüp odasının açık/kapalı durumunu ve anlık doluluk oranını gösteren, Yönetim Kurulu'nun (YK) tek tuşla durumu güncelleyebildiği, siber-büyü (Cyberpunk & Fantasy) temalı canlı one-page web uygulaması.
+**Yıldız Teknik Üniversitesi Bilim Kurgu ve Fantastik Kurgu Kulübü (YTÜ BKFK)** kulüp odasının açık/kapalı durumunu ve anlık doluluk bilgisini gösteren, sade ve heraldik fantastik temalı canlı durum sayfası.
+
+🔗 **Canlı Site:** [ytu-bkfk-oda-durumu.onrender.com](https://ytu-bkfk-oda-durumu.onrender.com)
 
 ---
 
-## ✨ Öne Çıkan Özellikler
+## ✨ Özellikler
 
-1. **🚀 Temaya Uygun Görsel Deneyim (Sci-Fi & Fantasy Hybrid):**
-   - **Boyut Kapısı / Stargate Görseli:** Oda açıkken zümrüt yeşili/siber camgöbeği enerji halkası döner; kapalıyken mühürlü koruyucu kalkan devreye girer.
-   - **Kozmik Arka Plan:** HTML5 Canvas tabanlı, oda durumuna göre rengi dinamik değişen hafif yıldız alanı ve nebula parçacıkları.
-   - **Siber & Rünik Tipografi:** Google Fonts *Orbitron* (siber/fütüristik), *Cinzel* (fantastik/rünik) ve *Inter* uyumu.
-   - **Web Audio API Ses Efektleri:** Hiçbir harici MP3 dosyasına ihtiyaç duymayan, tamamen tarayıcı içinde sentezlenen portal açılma, kalkan kilitleme ve uyarı tonları (sessize alma düğmeli).
-
-2. **⚡ Yönetim Kurulu (YK) İçin "Tek Tuşla" Hızlı Kontrol:**
-   - **Tek Dokunuş Hızlı Durumlar:**
-     - 🟢 *Kapıyı Açtım (Boş / Sakin)*
-     - 🟡 *Oda Canlandı (Yer Var)*
-     - 🔴 *Oda Doldu! (Yer Kalmadı)*
-     - 🛑 *Odayı Kapattım (Çıktık)*
-   - **Hızlı Aktivite Çipleri:** 🎲 Kutu Oyunu, ⚔️ FRP / D&D, ☕ Çay & Sohbet, 💻 Ders / Kodlama, 🃏 MTG, 🎬 Film.
-   - **Güvenli & Pratik PIN:** Varsayılan PIN `1911`. *"Bu cihazda beni hatırla"* seçeneği sayesinde YK üyeleri her seferinde şifre yazmak zorunda kalmaz.
-   - **Özel Duyuru/Not:** Örn. *"Çay demlendi, kapı aralık doğrudan gelebilirsiniz!"*
-
-3. **📡 Gerçek Zamanlı Canlı İletim (Server-Sent Events - SSE):**
-   - YK odayı açtığı veya "Dolu" olarak işaretlediği anda, sayfaya bakan tüm öğrencilerin ekranı **sayfayı yenilemeye gerek kalmadan anında güncellenir**.
-
-4. **📱 Öğrenci & Üye Kolaylıkları:**
-   - **🔔 Açılınca Haber Ver:** Tarayıcı Web Notification izni ile oda açıldığında bildirim gönderir.
-   - **📤 Durumu Paylaş:** WhatsApp, Discord veya hikayelerde tek tıkla paylaşmak için hazır durum metni ve bağlantı kopyalama.
-   - **🗺️ Nasıl Gidilir?:** Davutpaşa Kampüsü Kulüpler Binası / Mediko için adım adım kampüs içi yol tarifi akordiyonu.
-   - **PWA Uyumlu:** Telefonda *"Ana Ekrana Ekle"* yapılarak mobil uygulama gibi tam ekran çalıştırılabilir.
+- **❖ Canlı Oda Durumu (SSE):** Oda açıldığında, kapandığında veya doluluk değiştiğinde sayfa yenilenmesine gerek kalmadan tüm ziyaretçilerde anında güncellenir.
+- **🏰 Sade & Fantastik Tasarım:** Vektörel BKFK rünik logosu, *Cinzel* & *Inter* tipografisi, sıcak obsidyen arka plan ve heraldik renk paleti.
+- **📲 Mobil Uygulama (PWA) Desteği:** Hem Android hem iOS cihazlarda *"Uygulamayı Telefona Yükle"* / *"Ana Ekrana Ekle"* ile tam ekran mobil uygulama olarak çalışır.
+- **📍 Hızlı Konum Bağlantısı:** Tek dokunuşla Google Haritalar üzerinden *YTÜ Kulüpler Vadisi* konumunu açar.
+- **◫ Çift Görünüm Modu:** Tam sayfa görünümü ile pencere (kart) görünümü arasında geçiş yapabilme.
+- **🛡️ Güvenli YK Yönetim Paneli (`/yk`):**
+  - Sadece `/yk` veya `/admin` adresinde açılır; ana sayfada yönetim arayüzü görünmez.
+  - Kriptografik oturum çerezi (cookie) sayesinde YK üyeleri bir kez giriş yaptıktan sonra 1 yıl boyunca şifre sormadan doğrudan işlem yapabilir.
+  - Brute-force koruması (Rate Limiting) ve CORS güvenlik katmanları içerir.
 
 ---
 
 ## 🛠️ Kurulum & Çalıştırma
 
-### Gereksinimler
-- [Node.js](https://nodejs.org/) (v18 veya üzeri)
-- npm
-
-### 1. Depoyu İndirin ve Bağımlılıkları Yükleyin
+### 1. Bağımlılıkları Yükleyin
 ```bash
-git clone <repo-url>
-cd "BKFK Oda Açık Mı"
 npm install
 ```
 
-### 2. Ortam Değişkenleri (.env)
-`.env.example` dosyasını `.env` olarak kopyalayabilir veya düzenleyebilirsiniz:
+### 2. Ortam Değişkenleri (`.env`)
+`.env.example` dosyasını `.env` olarak kopyalayıp kendi ayarlarınızı girin:
 ```env
 PORT=3000
-ADMIN_PIN=1911
+ADMIN_PIN=GIZLI_PIN_KODUNUZ
 CLUB_NAME=YTÜ BKFK
 CLUB_FULL_NAME=Yıldız Teknik Üniversitesi Bilim Kurgu ve Fantastik Kurgu Kulübü
-ROOM_LOCATION=Davutpaşa Kampüsü, Kulüpler Binası
+ROOM_LOCATION=Davutpaşa Kampüsü, Kulüpler Vadisi
 ```
-> **Önemli:** Canlıya alırken `ADMIN_PIN` değerini sadece YK'nın bildiği güvenli bir PIN ile değiştirin!
 
 ### 3. Sunucuyu Başlatın
 ```bash
 npm start
 ```
-Tarayıcınızda açın: **`http://localhost:3000`**
+Tarayıcıda açın: **`http://localhost:3000`**
 
-Geliştirme modunda (dosya değişikliklerinde otomatik yeniden başlatma):
-```bash
-npm run dev
+---
+
+## 🔑 YK Yönetim Paneli Kullanımı
+
+1. **`/yk`** adresine gidin (örn. `https://ytu-bkfk-oda-durumu.onrender.com/yk`).
+2. YK PIN kodunu girin (giriş yaptıktan sonra tarayıcı çerezinde şifrelenmiş oturum anahtarı olarak saklanır).
+3. **Oda Durumu** (*AÇIK* / *KAPALI*) ve **Doluluk Durumu** (*YER VAR* / *DOLDU*) seçimini yapıp **Değişiklikleri Kaydet** butonuna basın.
+
+---
+
+## 📁 Proje Yapısı
+
+```text
+├── data/
+│   └── status.json            # Kalıcı oda durumu verisi
+├── public/
+│   ├── css/style.css          # Heraldik fantastik tema ve mobil uyumlu stiller
+│   ├── icons/                 # Vektörel SVG logo ve PWA uygulama ikonları
+│   ├── js/app.js              # SSE canlı bağlantı, PWA ve YK panel mantığı
+│   ├── index.html             # Ana uygulama sayfası
+│   ├── manifest.webmanifest   # PWA kurulum manifestosu
+│   └── sw.js                  # PWA Service Worker
+├── server.js                  # Express + SSE + Rate Limit + Cookie Auth sunucusu
+└── package.json
 ```
-
----
-
-## 🔑 YK Yönetim Paneline Erişim (Gizli URL)
-
-Normal sitede (`/`) hiçbir buton veya yönetim arayüzü görünmez. YK üyeleri özel URL ile erişir:
-
-1. Tarayıcıda **`/yk`** veya **`/admin`** adresine gidin:
-   - Örn: **`http://localhost:3000/yk`** *(Canlıda: `https://siteniz.com/yk`)*
-2. Karşınıza çıkan ekranda **YK PIN Kodunu** girin (Varsayılan: `1911`).
-3. *"Bu cihazda beni hatırla"* seçeneğini işaretlerseniz sonraki girişlerinizde doğrudan yönetim paneli açılır.
-4. Tek dokunuşla odayı Açık/Kapalı yapın veya doluluğu değiştirin!
-5. *"Çıkış Yap ✕"* veya *"Siteye Dön"* butonuna bastığınızda normal öğrenci görünümüne yönlendirilirsiniz.
-
----
-
-## 🌐 Ücretsiz Canlıya Alma (Deployment)
-
-### A. Vercel (Önerilen - Ücretsiz & Tek Tık)
-Projede `vercel.json` ve `api/index.js` hazır tanımlıdır.
-1. Projeyi GitHub'a yükleyin.
-2. [Vercel](https://vercel.com)'de **New Project** diyerek repo'nuzu seçin.
-3. Environment Variables kısmına:
-   - `ADMIN_PIN`: (belirlediğiniz şifre)
-4. **Deploy** butonuna basın. Birkaç saniyede siteniz `https://...vercel.app` olarak yayına girer!
-
-### B. Render / Railway / Fly.io / VPS
-1. `npm install` ve `npm start` komutlarıyla doğrudan Node.js servisi olarak çalıştırabilirsiniz.
-2. Kalıcı durum `data/status.json` dosyasında saklanır.
-
----
-
-## 🔌 API Referansı
-
-| Metot | Uç Nokta | Açıklama | Kimlik Doğrulama |
-|---|---|---|---|
-| `GET` | `/api/status` | Anlık oda durumunu ve kulüp bilgilerini döndürür. | Herkese Açık |
-| `GET` | `/api/events` | Server-Sent Events (SSE) gerçek zamanlı canlı yayın akışı. | Herkese Açık |
-| `POST` | `/api/verify-pin` | Girilen YK PIN kodunu doğrular (`{ pin }`). | Herkese Açık |
-| `POST` | `/api/status` | Oda durumunu günceller ve tüm kullanıcılara canlı yayar. | `x-admin-pin` Başlığı veya `pin` gövdesi |
-
----
-
-## 🎨 Tasarım ve Lisans
-
-- **Tasarım:** YTÜ Bilim Kurgu ve Fantastik Kurgu Kulübü ruhuna özel siber-büyü (Cyberpunk + High Fantasy) estetiği.
-- **Lisans:** MIT

@@ -300,9 +300,10 @@
       const data = await res.json();
 
       if (data.success) {
-        adminPin = pin;
-        setCookie('bkfk_admin_pin', pin, 365);
-        localStorage.setItem('bkfk_admin_pin', pin);
+        const sessionToken = data.token || pin;
+        adminPin = sessionToken;
+        setCookie('bkfk_admin_pin', sessionToken, 365);
+        localStorage.setItem('bkfk_admin_pin', sessionToken);
         if (pinDialog.open) pinDialog.close();
         showAdminPanel();
         return true;
@@ -313,7 +314,7 @@
           localStorage.removeItem('bkfk_admin_pin');
         }
         if (showErr && pinError) {
-          pinError.textContent = 'Hatalı PIN!';
+          pinError.textContent = data.message || 'Hatalı PIN!';
         }
         return false;
       }
