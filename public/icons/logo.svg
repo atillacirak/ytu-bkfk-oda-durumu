@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="portalGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f0ff" />
+      <stop offset="50%" stop-color="#7928ca" />
+      <stop offset="100%" stop-color="#ff0080" />
+    </linearGradient>
+    <linearGradient id="cyberGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ff9d" />
+      <stop offset="100%" stop-color="#00b4d8" />
+    </linearGradient>
+    <filter id="neonBlur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Outer Sci-Fi Gyro Ring -->
+  <circle cx="100" cy="100" r="90" fill="none" stroke="url(#portalGlow)" stroke-width="2.5" stroke-dasharray="14 6" opacity="0.8" />
+  <circle cx="100" cy="100" r="82" fill="none" stroke="#00f0ff" stroke-width="1.2" opacity="0.4" />
+  
+  <!-- Outer Orbit Nodes -->
+  <circle cx="100" cy="10" r="4" fill="#00f0ff" filter="url(#neonBlur)" />
+  <circle cx="190" cy="100" r="4" fill="#ff0080" filter="url(#neonBlur)" />
+  <circle cx="100" cy="190" r="4" fill="#7928ca" filter="url(#neonBlur)" />
+  <circle cx="10" cy="100" r="4" fill="#00ff9d" filter="url(#neonBlur)" />
+
+  <!-- Inner Mystic Rune Circle -->
+  <circle cx="100" cy="100" r="72" fill="none" stroke="#bd00ff" stroke-width="1.5" stroke-dasharray="4 8" opacity="0.7" />
+
+  <!-- D20 Isometric Sci-Fi Dice Structure (Fantasy x Sci-Fi Symbol) -->
+  <g transform="translate(100, 100)" stroke="url(#cyberGreen)" stroke-width="2" fill="none" filter="url(#neonBlur)">
+    <!-- Central Hexagon / Outer D20 silhouette -->
+    <polygon points="0,-48 42,-24 42,24 0,48 -42,24 -42,-24" stroke="#00f0ff" stroke-width="2" fill="#090d1a" fill-opacity="0.85" />
+    
+    <!-- Inner D20 facet lines -->
+    <!-- Center triangle -->
+    <polygon points="0,-24 24,18 -24,18" stroke="#00ff9d" stroke-width="1.8" fill="#131c38" fill-opacity="0.6" />
+    
+    <!-- Connectors to outer vertices -->
+    <line x1="0" y1="-48" x2="0" y2="-24" stroke="#00f0ff" stroke-width="1.8" />
+    <line x1="0" y1="-24" x2="42" y2="-24" stroke="#00f0ff" stroke-width="1.8" />
+    <line x1="0" y1="-24" x2="-42" y2="-24" stroke="#00f0ff" stroke-width="1.8" />
+    
+    <line x1="24" y1="18" x2="42" y2="-24" stroke="#00f0ff" stroke-width="1.8" />
+    <line x1="24" y1="18" x2="42" y2="24" stroke="#00f0ff" stroke-width="1.8" />
+    <line x1="24" y1="18" x2="0" y2="48" stroke="#00f0ff" stroke-width="1.8" />
+    
+    <line x1="-24" y1="18" x2="-42" y2="-24" stroke="#00f0ff" stroke-width="1.8" />
+    <line x1="-24" y1="18" x2="-42" y2="24" stroke="#00f0ff" stroke-width="1.8" />
+    <line x1="-24" y1="18" x2="0" y2="48" stroke="#00f0ff" stroke-width="1.8" />
+
+    <!-- Core Starlight Point -->
+    <circle cx="0" cy="4" r="3" fill="#ffffff" filter="url(#neonBlur)" />
+  </g>
+
+  <!-- Crosshairs / HUD Sci-Fi ticks -->
+  <line x1="25" y1="100" x2="35" y2="100" stroke="#00f0ff" stroke-width="2" opacity="0.8" />
+  <line x1="165" y1="100" x2="175" y2="100" stroke="#00f0ff" stroke-width="2" opacity="0.8" />
+  <line x1="100" y1="25" x2="100" y2="35" stroke="#00f0ff" stroke-width="2" opacity="0.8" />
+  <line x1="100" y1="165" x2="100" y2="175" stroke="#00f0ff" stroke-width="2" opacity="0.8" />
+</svg>

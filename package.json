@@ -1,0 +1,25 @@
+{
+  "name": "ytu-bkfk-oda-durumu",
+  "version": "1.0.0",
+  "description": "YTÜ Bilim Kurgu ve Fantastik Kurgu Kulübü - Kulüp Odası Canlı Durum ve Doluluk Portalı",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "ytu",
+    "bkfk",
+    "bilim-kurgu",
+    "fantastik-kurgu",
+    "oda-durumu",
+    "kulup"
+  ],
+  "author": "YTÜ BKFK",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}

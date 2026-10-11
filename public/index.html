@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>YTÜ BKFK | Kulüp Odası Canlı Durumu</title>
+  <meta name="description" content="Yıldız Teknik Üniversitesi Bilim Kurgu ve Fantastik Kurgu Kulübü (YTÜ BKFK) kulüp odasının anlık açık/kapalı durumu ve doluluk oranı.">
+  <meta name="theme-color" content="#00f0ff">
+
+  <!-- PWA Manifest & Favicon -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href="/icons/logo.svg">
+  <link rel="apple-touch-icon" href="/icons/logo.svg">
+
+  <!-- Google Fonts: Orbitron (Sci-Fi), Cinzel (Fantasy/Runic), Inter (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Dynamic Canvas Starfield Background -->
+  <canvas id="space-canvas"></canvas>
+  <div class="cyber-grid-overlay" aria-hidden="true"></div>
+
+  <div class="app-container">
+    <!-- Top Navigation Header -->
+    <header class="top-nav">
+      <a href="/" class="brand-wrapper" aria-label="YTÜ BKFK Ana Sayfa">
+        <img src="/icons/logo.svg" alt="YTÜ BKFK Logo" class="brand-logo" width="38" height="38">
+        <div class="brand-text">
+          <h1>YTÜ BKFK</h1>
+          <span>Kulüp Odası Portalı</span>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <!-- Audio Synth Toggle Button -->
+        <button id="sound-toggle-btn" class="icon-btn" title="Ses Efektlerini Aç/Kapat" aria-label="Ses Efektleri">
+          <span id="sound-icon">🔊</span>
+        </button>
+
+        <!-- YK PIN / Admin Button -->
+        <button id="yk-access-btn" class="yk-access-btn" title="Yönetim Kurulu Kontrol İstasyonu">
+          <span>🛡️</span>
+          <span id="yk-btn-text">YK Kontrol</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- YK ONE-TOUCH COMMAND STATION (Visible once PIN is verified) -->
+      <section id="admin-panel-section" class="admin-bar-container" style="display: none;" aria-label="Yönetim Kurulu Kontrol Paneli">
+        <div class="admin-panel">
+          <div class="admin-panel-header">
+            <h2>
+              <span>⚡</span>
+              <span>YK Hızlı Kontrol İstasyonu</span>
+              <span class="admin-tag">YÖNETİM</span>
+            </h2>
+            <button id="admin-exit-btn" class="admin-exit-btn" title="YK Oturumunu Kapat">Çıkış Yap ✕</button>
+          </div>
+
+          <!-- SUPER FAST 1-TOUCH PRESETS -->
+          <div class="admin-control-section">
+            <span class="admin-section-label">⚡ Tek Dokunuşla Hızlı Durumlar</span>
+            <div class="admin-quick-presets">
+              <button type="button" class="btn-quick-preset preset-open" id="quick-open-empty">
+                <span>🟢 Kapıyı Açtım</span>
+                <small>Boş / Sakin</small>
+              </button>
+              <button type="button" class="btn-quick-preset preset-mod" id="quick-open-mod">
+                <span>🟡 Oda Canlandı</span>
+                <small>Yer Var</small>
+              </button>
+              <button type="button" class="btn-quick-preset preset-full" id="quick-open-full">
+                <span>🔴 Oda Doldu!</span>
+                <small>Yer Kalmadı</small>
+              </button>
+              <button type="button" class="btn-quick-preset preset-close" id="quick-close-room">
+                <span>🛑 Odayı Kapattım</span>
+                <small>Çıktık</small>
+              </button>
+            </div>
+          </div>
+
+          <!-- Fine-grained Open / Closed Buttons -->
+          <div class="admin-control-section">
+            <span class="admin-section-label">1. Boyut Kapısı Durumu</span>
+            <div class="admin-toggle-row">
+              <button id="btn-admin-open" type="button" class="btn-toggle-status btn-open" data-open="true">
+                <span>🟢</span>
+                <span>ODAYI AÇIK GÖSTER</span>
+              </button>
+              <button id="btn-admin-closed" type="button" class="btn-toggle-status btn-closed" data-open="false">
+                <span>🔴</span>
+                <span>ODAYI KAPALI GÖSTER</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Fine-grained Occupancy Selector -->
+          <div class="admin-control-section">
+            <span class="admin-section-label">2. Doluluk Oranı</span>
+            <div class="admin-occ-row">
+              <button type="button" class="btn-occ active" data-occ="empty">
+                🟢 Boş / Rahat
+              </button>
+              <button type="button" class="btn-occ" data-occ="moderate">
+                🟡 Orta / Yer Var
+              </button>
+              <button type="button" class="btn-occ" data-occ="full">
+                🔴 Dolu / Taştı!
+              </button>
+            </div>
+          </div>
+
+          <!-- Preset Activity Chips -->
+          <div class="admin-control-section">
+            <span class="admin-section-label">3. Odada Ne Yapılıyor? (Hızlı Seçim)</span>
+            <div class="activity-presets">
+              <button type="button" class="activity-chip" data-activity="🎲 Kutu Oyunları (Board Games)">🎲 Kutu Oyunu</button>
+              <button type="button" class="activity-chip" data-activity="⚔️ Masaüstü RYO / D&D Seansı">⚔️ FRP / D&D</button>
+              <button type="button" class="activity-chip" data-activity="☕ Çay, Kahve & Muhabbet">☕ Çay & Sohbet</button>
+              <button type="button" class="activity-chip" data-activity="💻 Ders & Birlikte Çalışma">💻 Ders / Kodlama</button>
+              <button type="button" class="activity-chip" data-activity="🃏 Magic: The Gathering / Kartlar">🃏 MTG / Kart Oyunu</button>
+              <button type="button" class="activity-chip" data-activity="🎬 Film / Anime Gösterimi">🎬 Film / Anime</button>
+            </div>
+          </div>
+
+          <!-- Admin Inputs for Sorumlu & Custom Note -->
+          <div class="admin-input-grid">
+            <div class="admin-field">
+              <label for="admin-responsible-input">Odadaki YK / Sorumlu İsmi</label>
+              <input id="admin-responsible-input" class="cyber-input" type="text" placeholder="Örn: Atakan (YK)" maxlength="50">
+            </div>
+            <div class="admin-field">
+              <label for="admin-activity-input">Özel Aktivite Adı</label>
+              <input id="admin-activity-input" class="cyber-input" type="text" placeholder="Örn: Catan Turnuvası" maxlength="60">
+            </div>
+            <div class="admin-field full-width">
+              <label for="admin-note-input">Gelenlere Not / Duyuru</label>
+              <input id="admin-note-input" class="cyber-input" type="text" placeholder="Örn: Çay demlendi, kapı aralık, doğrudan girebilirsiniz!" maxlength="140">
+            </div>
+          </div>
+
+          <!-- Save / Publish Button -->
+          <button id="admin-save-btn" type="button" class="btn-save-status">
+            <span>🚀</span>
+            <span>CANLI YAYINLA & KAYDET</span>
+          </button>
+          <div id="admin-toast" class="admin-status-toast" role="status"></div>
+        </div>
+      </section>
+
+      <!-- HERO PRIMARY STATUS CARD -->
+      <section id="hero-status-card" class="status-hero state-open" aria-live="polite">
+        <!-- Sci-Fi HUD Corner Brackets -->
+        <div class="hud-corner top-left"></div>
+        <div class="hud-corner top-right"></div>
+        <div class="hud-corner bottom-left"></div>
+        <div class="hud-corner bottom-right"></div>
+
+        <!-- Rotating Gyro Rings & Glowing Core -->
+        <div class="portal-graphic-container">
+          <div class="portal-outer-ring"></div>
+          <div class="portal-rune-ring"></div>
+          <div class="portal-inner-ring"></div>
+          <div id="portal-core-icon" class="portal-core">🌀</div>
+        </div>
+
+        <!-- Live Beacon Tag -->
+        <div class="live-badge">
+          <span class="live-beacon"></span>
+          <span id="live-badge-text">PORTAL AKTİF • ODAYA GİRİŞ SERBEST</span>
+        </div>
+
+        <!-- Main Headline -->
+        <h2 id="status-title" class="status-title">KULÜP ODASI AÇIK</h2>
+        <p id="status-subtitle" class="status-subtitle">
+          Boyut kapısı aralandı! Masaüstü RYO, kutu oyunları veya muhabbet için odaya bekleniyorsunuz.
+        </p>
+
+        <!-- OCCUPANCY HOLOMETER -->
+        <div class="occupancy-card">
+          <div class="occ-header">
+            <span class="occ-label">Doluluk Oranı</span>
+            <div id="occ-badge" class="occ-badge occ-empty">🟢 BOŞ / YER ÇOK</div>
+          </div>
+
+          <!-- 3-Segment Visual Meter -->
+          <div class="occ-bar-track" aria-hidden="true">
+            <div id="occ-seg-1" class="occ-segment active-empty"></div>
+            <div id="occ-seg-2" class="occ-segment"></div>
+            <div id="occ-seg-3" class="occ-segment"></div>
+          </div>
+
+          <p id="occ-description" class="occ-description">
+            Sakin Boyut: Masalar ve koltuklar boş, rahatça gelip yerleşebilirsiniz.
+          </p>
+        </div>
+
+        <!-- Quick Interactive Action Row: Notify & Share -->
+        <div class="hero-action-row">
+          <button id="notify-toggle-btn" class="hero-action-pill" title="Oda açıldığında tarayıcı bildirimi al">
+            <span id="notify-icon">🔔</span>
+            <span id="notify-text">Açılınca Haber Ver</span>
+          </button>
+          <button id="share-status-btn" class="hero-action-pill" title="Oda durumunu arkadaşlarınla paylaş">
+            <span>📤</span>
+            <span>Durumu Paylaş</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Special Bulletin / Room Note Banner (Visible when note exists) -->
+      <div id="bulletin-banner" class="bulletin-box" role="alert">
+        <span class="bulletin-icon">📜</span>
+        <div class="bulletin-text" id="bulletin-text">
+          "Kulüp odasındayız, boyut kapısı açık! Çayımız var, bekleriz."
+        </div>
+      </div>
+
+      <!-- DETAILS GRID: Activity, Responsible, Time, Location -->
+      <section class="details-grid" aria-label="Oda Detayları">
+        <!-- Current Activity Card -->
+        <article class="info-card">
+          <div class="info-icon-wrapper">🎲</div>
+          <div class="info-content">
+            <div class="info-label">Şu An Ne Yapılıyor?</div>
+            <div id="info-activity" class="info-value">Kutu Oyunları & Sohbet</div>
+            <div class="info-subtext">Masaüstü RYO, kutu oyunu & sohbet</div>
+          </div>
+        </article>
+
+        <!-- Responsible / Nöbetçi YK Card -->
+        <article class="info-card">
+          <div class="info-icon-wrapper">🧙‍♂️</div>
+          <div class="info-content">
+            <div class="info-label">Odadaki YK / Sorumlu</div>
+            <div id="info-responsible" class="info-value">Nöbetçi YK</div>
+            <div class="info-subtext">Anahtar ve oda koordinasyonu</div>
+          </div>
+        </article>
+
+        <!-- Last Updated Card -->
+        <article class="info-card">
+          <div class="info-icon-wrapper">⏱️</div>
+          <div class="info-content">
+            <div class="info-label">Son Güncelleme</div>
+            <div id="info-updated" class="info-value">Az önce</div>
+            <div class="info-subtext">Canlı sistem kontrolü</div>
+          </div>
+        </article>
+
+        <!-- Room Location Card -->
+        <article class="info-card">
+          <div class="info-icon-wrapper">📍</div>
+          <div class="info-content">
+            <div class="info-label">Oda Konumu</div>
+            <div class="info-value">Davutpaşa Kampüsü</div>
+            <div class="info-subtext">Kulüpler Binası / Mediko Civarı</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- CAMPUS DIRECTIONS ACCORDION -->
+      <details class="directions-card">
+        <summary class="directions-summary">
+          <div class="summary-left">
+            <span>🗺️</span>
+            <span>Kulüp Odası Nerede? Nasıl Gidilir?</span>
+          </div>
+          <span class="directions-arrow">▼</span>
+        </summary>
+        <div class="directions-content">
+          <div class="directions-step">
+            <span class="step-num">1</span>
+            <div><strong>Kampüse Ulaşım:</strong> M1A Yenikapı - Atatürk Havalimanı metrosuna binip <strong>Davutpaşa - YTÜ</strong> durağında inin.</div>
+          </div>
+          <div class="directions-step">
+            <span class="step-num">2</span>
+            <div><strong>Kulüpler Binasına Geçiş:</strong> Ring servisleri veya Tarihi Taş Bina arkasından Mediko / Kulüpler Binası yönüne 5 dakika yürüyün.</div>
+          </div>
+          <div class="directions-step">
+            <span class="step-num">3</span>
+            <div><strong>BKFK Odası:</strong> Kulüpler Binası'na girdikten sonra koridordaki BKFK panosunu ve ejderha/zar amblemli kapımızı bulun! Kapı aralıksa doğrudan içeri adım atabilirsiniz.</div>
+          </div>
+        </div>
+      </details>
+
+      <!-- CLUB COMMUNITY & SOCIAL LINKS -->
+      <section class="club-links-card">
+        <div class="club-links-title">
+          <span>🌌</span>
+          <span>YTÜ BKFK İletişim & Topluluk Kanalları</span>
+        </div>
+        <div class="social-pills">
+          <a href="https://instagram.com/ytubkfk" target="_blank" rel="noopener noreferrer" class="social-pill">
+            <span>📸</span>
+            <span>Instagram (@ytubkfk)</span>
+          </a>
+          <a href="https://discord.gg/bkfk" target="_blank" rel="noopener noreferrer" class="social-pill">
+            <span>💬</span>
+            <span>Discord Sunucusu</span>
+          </a>
+          <a href="https://chat.whatsapp.com/" target="_blank" rel="noopener noreferrer" class="social-pill">
+            <span>📱</span>
+            <span>WhatsApp Duyuru Grubu</span>
+          </a>
+          <a href="mailto:iletisim@bkfk.org" class="social-pill">
+            <span>✉️</span>
+            <span>Kulüp E-Posta</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="portal-footer">
+      <p class="footer-quote">
+        "Karanlıkta bir zar yuvarlandı; boyut kapısı ardına kadar açıldı..."
+      </p>
+      <p class="footer-copy">
+        YTÜ Bilim Kurgu ve Fantastik Kurgu Kulübü © 2026 • Tüm Hakları Boyutlararası Korunmaktadır.
+      </p>
+      <div class="sync-pill">
+        <span id="sync-dot" class="sync-dot"></span>
+        <span id="sync-status-text">Canlı Boyut Bağlantısı Aktif (SSE)</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- YK PIN AUTHENTICATION MODAL (<dialog>) -->
+  <dialog id="pin-dialog" class="pin-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-header">
+      <div class="dialog-icon">🔐</div>
+      <h3 id="dialog-title">YK Girişi</h3>
+      <p>Oda durumunu yönetmek için Yönetim Kurulu PIN kodunu giriniz.</p>
+    </div>
+
+    <form id="pin-form" class="pin-form" method="dialog">
+      <div class="admin-field">
+        <input 
+          id="pin-input" 
+          class="cyber-input pin-input" 
+          type="password" 
+          inputmode="numeric" 
+          pattern="[0-9]*" 
+          placeholder="••••" 
+          maxlength="8" 
+          autocomplete="off" 
+          required
+        >
+      </div>
+
+      <label class="remember-label">
+        <input type="checkbox" id="remember-pin" checked>
+        <span>Bu cihazda beni hatırla (Tek tıkla yönetim)</span>
+      </label>
+
+      <div id="pin-error-msg" class="pin-error" role="alert"></div>
+
+      <div class="dialog-buttons">
+        <button id="cancel-pin-btn" type="button" class="btn-secondary">İptal</button>
+        <button id="submit-pin-btn" type="submit" class="btn-primary">Giriş Yap</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Floating Toast Notification for Link Copying / Sharing -->
+  <div id="share-toast" class="share-toast" role="status">Bağlantı panoya kopyalandı! 📋</div>
+
+  <!-- Scripts -->
+  <script src="/js/audio.js"></script>
+  <script src="/js/stars.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

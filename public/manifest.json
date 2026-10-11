@@ -1,0 +1,16 @@
+{
+  "name": "YTÜ BKFK Oda Durumu",
+  "short_name": "BKFK Oda",
+  "description": "YTÜ Bilim Kurgu ve Fantastik Kurgu Kulübü Canlı Oda Durumu",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070a13",
+  "theme_color": "#00f0ff",
+  "icons": [
+    {
+      "src": "/icons/logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
