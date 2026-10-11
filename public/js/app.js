@@ -110,8 +110,24 @@
     connectSSE();
     startTimeAgoTicker();
 
-    // Check if user already has remembered PIN
-    if (adminPin) {
+    // Check URL parameters for direct YK links (e.g. ?pin=1911 or ?yk)
+    const urlParams = new URLSearchParams(window.location.search);
+    const pinFromUrl = urlParams.get('pin');
+    
+    if (pinFromUrl) {
+      verifyAndEnableAdmin(pinFromUrl, true).then((success) => {
+        if (success) {
+          localStorage.setItem('bkfk_admin_pin', pinFromUrl);
+          // Clean URL without refreshing
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      });
+    } else if (urlParams.has('yk') || urlParams.has('admin')) {
+      if (!adminPin) {
+        openPinDialog();
+      }
+    } else if (adminPin) {
+      // Check if user already has remembered PIN
       verifyAndEnableAdmin(adminPin, false);
     }
   }
@@ -706,6 +722,32 @@
       if (window.soundFx) window.soundFx.playClick();
       saveAdminStatus();
     });
+
+    // Global keyboard shortcut: Alt + Y or Ctrl + Shift + K to open YK panel
+    document.addEventListener('keydown', (e) => {
+      if ((e.altKey && (e.key === 'y' || e.key === 'Y')) || (e.ctrlKey && e.shiftKey && (e.key === 'k' || e.key === 'K'))) {
+        e.preventDefault();
+        openPinDialog();
+      }
+    });
+
+    // Easter Egg: Rapidly tapping the logo 3 times opens YK Panel
+    const logoEl = document.querySelector('.brand-logo');
+    let logoClicks = 0;
+    let logoTimer = null;
+    if (logoEl) {
+      logoEl.addEventListener('click', (e) => {
+        logoClicks++;
+        clearTimeout(logoTimer);
+        if (logoClicks >= 3) {
+          logoClicks = 0;
+          e.preventDefault();
+          openPinDialog();
+        } else {
+          logoTimer = setTimeout(() => { logoClicks = 0; }, 1200);
+        }
+      });
+    }
 
     // Global click sound on interactive elements
     document.addEventListener('click', (e) => {
