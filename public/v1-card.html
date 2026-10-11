@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YTÜ BKFK | Kulüp Odası</title>
+  <meta name="description" content="YTÜ Bilim Kurgu ve Fantastik Kurgu Kulübü Odası Canlı Durumu">
+  <link rel="icon" type="image/png" href="/icons/logo.png">
+
+  <!-- Google Fonts: Cinzel (Fantasy Serif) & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <main class="portal-wrap">
+
+    <!-- YK Hızlı Yönetim Paneli (Sadece /yk veya /admin adresinde açılır) -->
+    <section id="admin-panel" class="admin-panel" style="display: none;">
+      <div class="admin-header">
+        <span class="admin-badge">❖ YK YÖNETİMİ ❖</span>
+        <button id="admin-exit-btn" type="button" class="btn-exit" title="Siteye Dön">Siteye Dön ✕</button>
+      </div>
+
+      <div class="admin-controls">
+        <div class="control-group">
+          <label>Oda Durumu</label>
+          <div class="btn-group">
+            <button id="yk-btn-open" type="button" class="yk-btn btn-open">AÇIK</button>
+            <button id="yk-btn-closed" type="button" class="yk-btn btn-closed">KAPALI</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>Doluluk Durumu</label>
+          <div class="btn-group">
+            <button id="yk-btn-empty" type="button" class="yk-btn btn-occ">YER VAR</button>
+            <button id="yk-btn-full" type="button" class="yk-btn btn-occ">DOLDU</button>
+          </div>
+        </div>
+      </div>
+      <div id="admin-toast" class="admin-toast"></div>
+    </section>
+
+    <!-- Ana Durum Kartı (Dümdüz siyah, fantastik köşe motifleri) -->
+    <div class="status-card" id="status-card">
+      <!-- Köşe Motifleri -->
+      <span class="corner-ornament corner-tl">❖</span>
+      <span class="corner-ornament corner-tr">❖</span>
+      <span class="corner-ornament corner-bl">❖</span>
+      <span class="corner-ornament corner-br">❖</span>
+
+      <!-- BKFK Rünik Logosu (Şeffaf Vektörel SVG) -->
+      <div class="logo-container">
+        <img src="/icons/logo.svg" alt="YTÜ BKFK Logosu" class="bkfk-logo" width="150" height="150">
+      </div>
+
+      <!-- Başlık -->
+      <h1 class="club-title">YTÜ BKFK</h1>
+      <div class="club-divider">Kulüp Odası</div>
+
+      <!-- 1. Oda Açık mı / Kapalı mı? -->
+      <div class="status-banner" id="status-banner">
+        <span id="status-text">KONTROL EDİLİYOR...</span>
+      </div>
+
+      <!-- 2. Dolu mu / Yer Var mı? -->
+      <div class="occupancy-pill" id="occupancy-pill">
+        <span id="occ-text">Doluluk kontrol ediliyor</span>
+      </div>
+
+      <!-- 3. Konum: Google Maps (YTÜ Kulüpler Vadisi) -->
+      <a 
+        href="https://www.google.com/maps/search/?api=1&query=YT%C3%9C+Kul%C3%BCpler+Vadisi" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        class="location-btn"
+        title="Google Haritalar'da Aç"
+      >
+        <span class="location-icon">📍</span>
+        <span>Konum: YTÜ Kulüpler Vadisi</span>
+        <span class="location-arrow">↗</span>
+      </a>
+
+      <!-- Son Güncelleme Zamanı -->
+      <div class="update-time" id="update-time">Canlı bağlantı kuruluyor...</div>
+    </div>
+  </main>
+
+  <!-- YK PIN Doğrulama Modalı (Sadece /yk veya /admin adresinde açılır) -->
+  <dialog id="pin-dialog" class="pin-dialog">
+    <div class="pin-box">
+      <h3>❖ YK Girişi ❖</h3>
+      <p>Yönetim Kurulu PIN kodunu giriniz</p>
+      <form id="pin-form" method="dialog">
+        <input 
+          type="password" 
+          id="pin-input" 
+          class="pin-input" 
+          placeholder="••••" 
+          maxlength="8" 
+          inputmode="numeric" 
+          autocomplete="off" 
+          autofocus 
+          required
+        >
+        <div id="pin-error" class="pin-error"></div>
+        <div class="pin-actions">
+          <button type="button" id="pin-cancel-btn" class="btn-cancel">Siteye Dön</button>
+          <button type="submit" class="btn-submit">Giriş Yap</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/dev-panel.js"></script>
+</body>
+</html>
