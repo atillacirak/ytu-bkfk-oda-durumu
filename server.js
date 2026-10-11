@@ -72,7 +72,7 @@ if (!fs.existsSync(DATA_DIR)) {
 
 // Initial status default values
 const defaultStatus = {
-  isOpen: true,
+  isOpen: false,
   occupancy: 'empty', // 'empty' | 'moderate' | 'full'
   activity: 'Kutu Oyunları & Muhabbet',
   responsible: 'Nöbetçi YK',
@@ -85,17 +85,67 @@ const defaultStatus = {
 // Load or initialize status
 let currentStatus = { ...defaultStatus };
 
+// SSE Clients List
+const sseClients = new Set();
+
+// Cloud KV Persistence Helpers (Render restart/redeploy durumlarında durumu korur)
+function getCloudKvUrl(mode = 'get', encodedVal = '') {
+  const appKey = process.env.KV_APP_KEY || Buffer.from('djRhcmlvODA=', 'base64').toString('utf8');
+  const itemKey = 'bkfk_' + FALLBACK_PIN_HASH.slice(0, 12);
+  if (mode === 'set') {
+    return `https://keyvalue.immanuel.co/api/KeyVal/UpdateValue/${appKey}/${itemKey}/${encodedVal}`;
+  }
+  return `https://keyvalue.immanuel.co/api/KeyVal/GetValue/${appKey}/${itemKey}`;
+}
+
+async function syncStatusToCloud(status) {
+  try {
+    const minimal = {
+      isOpen: Boolean(status.isOpen),
+      occupancy: status.occupancy || 'empty',
+      updatedAt: status.updatedAt || new Date().toISOString()
+    };
+    const encoded = Buffer.from(JSON.stringify(minimal)).toString('base64url');
+    await fetch(getCloudKvUrl('set', encoded), { method: 'POST' });
+  } catch (err) {
+    console.warn('Bulut durum senkronizasyonu atlandı:', err.message);
+  }
+}
+
+async function loadStatusFromCloud() {
+  try {
+    const res = await fetch(getCloudKvUrl('get'));
+    if (!res.ok) return;
+    const rawVal = await res.json();
+    if (!rawVal || typeof rawVal !== 'string') return;
+
+    const parsed = JSON.parse(Buffer.from(rawVal, 'base64url').toString('utf8'));
+    if (typeof parsed.isOpen === 'boolean') {
+      currentStatus = {
+        ...currentStatus,
+        isOpen: parsed.isOpen,
+        occupancy: parsed.occupancy || currentStatus.occupancy,
+        updatedAt: parsed.updatedAt || currentStatus.updatedAt
+      };
+      fs.writeFileSync(STATUS_FILE, JSON.stringify(currentStatus, null, 2), 'utf-8');
+      broadcastStatus();
+    }
+  } catch (err) {
+    console.warn('Bulut durum okuma atlandı:', err.message);
+  }
+}
+
 function loadStatus() {
   try {
     if (fs.existsSync(STATUS_FILE)) {
       const raw = fs.readFileSync(STATUS_FILE, 'utf-8');
       currentStatus = { ...defaultStatus, ...JSON.parse(raw) };
-    } else {
-      saveStatus(currentStatus);
     }
   } catch (err) {
     console.error('Durum dosyası okunurken hata:', err.message);
   }
+  // Sunucu her başladığında buluttaki son durumu çek
+  loadStatusFromCloud();
 }
 
 function saveStatus(status) {
@@ -104,12 +154,11 @@ function saveStatus(status) {
   } catch (err) {
     console.error('Durum kaydedilirken hata:', err.message);
   }
+  // Buluta kaydet (arka planda)
+  syncStatusToCloud(status);
 }
 
 loadStatus();
-
-// SSE Clients List
-const sseClients = new Set();
 
 function broadcastStatus() {
   const payload = `data: ${JSON.stringify({
