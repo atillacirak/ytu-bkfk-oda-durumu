@@ -233,7 +233,10 @@ body {
 }
 
 .location-icon {
-  color: var(--gold-primary);
+  font-size: 1.05rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
 }
 
 .location-arrow {
