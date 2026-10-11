@@ -34,7 +34,14 @@
   const ykBtnClosed = document.getElementById('yk-btn-closed');
   const ykBtnEmpty = document.getElementById('yk-btn-empty');
   const ykBtnFull = document.getElementById('yk-btn-full');
+  const ykBtnSave = document.getElementById('yk-btn-save');
   const adminToast = document.getElementById('admin-toast');
+
+  // PWA & State
+  const pwaInstallBtn = document.getElementById('pwa-install-btn');
+  let deferredPrompt = null;
+  let pendingIsOpen = null;
+  let pendingOccupancy = null;
 
   // PIN Dialog
   const pinDialog = document.getElementById('pin-dialog');
@@ -74,6 +81,7 @@
     setupEventListeners();
     connectSSE();
     startTimeAgoInterval();
+    initPWA();
 
     // Check saved view preference (default is fullpage)
     const savedView = localStorage.getItem('bkfk_view_mode');
@@ -149,6 +157,8 @@
 
   function handleStatusUpdate(newStatus) {
     currentStatus = { ...newStatus };
+    if (pendingIsOpen === null) pendingIsOpen = currentStatus.isOpen;
+    if (pendingOccupancy === null) pendingOccupancy = currentStatus.occupancy;
     renderStatus();
     if (isYkUrl()) {
       renderAdminButtons();
@@ -216,6 +226,8 @@
   function showAdminPanel() {
     if (adminPanel) {
       adminPanel.style.display = 'block';
+      if (pendingIsOpen === null) pendingIsOpen = currentStatus.isOpen;
+      if (pendingOccupancy === null) pendingOccupancy = currentStatus.occupancy;
       renderAdminButtons();
     }
   }
@@ -223,7 +235,10 @@
   function renderAdminButtons() {
     if (!ykBtnOpen || !ykBtnClosed) return;
 
-    if (currentStatus.isOpen) {
+    const openVal = pendingIsOpen !== null ? pendingIsOpen : currentStatus.isOpen;
+    const occVal = pendingOccupancy !== null ? pendingOccupancy : currentStatus.occupancy;
+
+    if (openVal) {
       ykBtnOpen.classList.add('active');
       ykBtnClosed.classList.remove('active');
     } else {
@@ -231,12 +246,21 @@
       ykBtnClosed.classList.add('active');
     }
 
-    if (currentStatus.occupancy === 'full') {
+    if (occVal === 'full') {
       ykBtnFull.className = 'yk-btn btn-occ active-full';
       ykBtnEmpty.className = 'yk-btn btn-occ';
     } else {
       ykBtnEmpty.className = 'yk-btn btn-occ active-empty';
       ykBtnFull.className = 'yk-btn btn-occ';
+    }
+
+    if (ykBtnSave && !ykBtnSave.classList.contains('is-saving')) {
+      const hasChanges = (openVal !== currentStatus.isOpen) || (occVal !== currentStatus.occupancy);
+      if (hasChanges) {
+        ykBtnSave.innerHTML = '<span>💾</span><span>Değişiklikleri Kaydet (Bekliyor)</span>';
+      } else {
+        ykBtnSave.innerHTML = '<span>💾</span><span>Değişiklikleri Kaydet</span>';
+      }
     }
   }
 
@@ -269,16 +293,26 @@
     }
   }
 
-  async function sendAdminUpdate(newFields) {
+  async function sendAdminUpdate(newFields = {}) {
     if (!adminPin) {
       openPinModal();
       return;
     }
 
+    const targetIsOpen = typeof newFields.isOpen === 'boolean' 
+      ? newFields.isOpen 
+      : (pendingIsOpen !== null ? pendingIsOpen : currentStatus.isOpen);
+    const targetOccupancy = newFields.occupancy || (pendingOccupancy !== null ? pendingOccupancy : currentStatus.occupancy);
+
+    if (ykBtnSave) {
+      ykBtnSave.classList.add('is-saving');
+      ykBtnSave.innerHTML = '<span>⏳</span><span>Kaydediliyor...</span>';
+    }
+
     try {
       const payload = {
-        isOpen: typeof newFields.isOpen === 'boolean' ? newFields.isOpen : currentStatus.isOpen,
-        occupancy: newFields.occupancy || currentStatus.occupancy
+        isOpen: targetIsOpen,
+        occupancy: targetOccupancy
       };
 
       const res = await fetch('/api/status', {
@@ -292,12 +326,25 @@
 
       const data = await res.json();
       if (data.success) {
-        showToast('Durum güncellendi! 🚀');
+        showToast('Durum başarıyla kaydedildi! 🚀');
+        currentStatus.isOpen = payload.isOpen;
+        currentStatus.occupancy = payload.occupancy;
+        currentStatus.updatedAt = new Date().toISOString();
+        pendingIsOpen = payload.isOpen;
+        pendingOccupancy = payload.occupancy;
+        renderStatus();
+        renderAdminButtons();
       } else {
-        showToast('Güncelleme başarısız!');
+        showToast(data.message || 'Güncelleme başarısız!');
+        renderAdminButtons();
       }
     } catch {
-      showToast('Ağ hatası!');
+      showToast('Ağ hatası oluştu!');
+      renderAdminButtons();
+    } finally {
+      if (ykBtnSave) {
+        ykBtnSave.classList.remove('is-saving');
+      }
     }
   }
 
@@ -322,28 +369,38 @@
   }
 
   function setupEventListeners() {
-    // 1-Touch Status Buttons for YK
+    // Admin Buttons for YK (Pending selection -> Save button commits)
     if (ykBtnOpen) {
       ykBtnOpen.addEventListener('click', () => {
-        sendAdminUpdate({ isOpen: true });
+        pendingIsOpen = true;
+        renderAdminButtons();
       });
     }
 
     if (ykBtnClosed) {
       ykBtnClosed.addEventListener('click', () => {
-        sendAdminUpdate({ isOpen: false });
+        pendingIsOpen = false;
+        renderAdminButtons();
       });
     }
 
     if (ykBtnEmpty) {
       ykBtnEmpty.addEventListener('click', () => {
-        sendAdminUpdate({ occupancy: 'empty' });
+        pendingOccupancy = 'empty';
+        renderAdminButtons();
       });
     }
 
     if (ykBtnFull) {
       ykBtnFull.addEventListener('click', () => {
-        sendAdminUpdate({ occupancy: 'full' });
+        pendingOccupancy = 'full';
+        renderAdminButtons();
+      });
+    }
+
+    if (ykBtnSave) {
+      ykBtnSave.addEventListener('click', () => {
+        sendAdminUpdate();
       });
     }
 
@@ -385,6 +442,65 @@
     if (viewToggleBtn) {
       viewToggleBtn.addEventListener('click', toggleViewMode);
     }
+  }
+
+  /* --------------------------------------------------------------------------
+     PWA Kurulumu & Service Worker
+     -------------------------------------------------------------------------- */
+  function initPWA() {
+    // 1. Service Worker Kaydı
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch((err) => {
+          console.warn('SW kaydı başarısız:', err);
+        });
+      });
+    }
+
+    // Zaten PWA / Standalone olarak açılmışsa yükle butonunu gizle
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (isStandalone) {
+      if (pwaInstallBtn) pwaInstallBtn.style.display = 'none';
+      return;
+    }
+
+    const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+
+    // 2. Android / Chrome / Samsung Internet kurulum bildirimi yakalama
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (pwaInstallBtn) pwaInstallBtn.style.display = 'inline-flex';
+    });
+
+    // 3. iOS Cihazlar (beforeinstallprompt desteklemez, butonu direkt gösterip rehber açıyoruz)
+    if (isIos && !isStandalone && pwaInstallBtn) {
+      pwaInstallBtn.style.display = 'inline-flex';
+    }
+
+    // 4. Yükleme butonuna tıklama davranışı
+    if (pwaInstallBtn) {
+      pwaInstallBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          const { outcome } = await deferredPrompt.userChoice;
+          if (outcome === 'accepted') {
+            pwaInstallBtn.style.display = 'none';
+          }
+          deferredPrompt = null;
+        } else if (isIos) {
+          alert("📱 Uygulamayı Telefona Yükleme:\n\n1. Safari'nin altındaki 'Paylaş (⬆️)' simgesine dokunun.\n2. Açılan menüden 'Ana Ekrana Ekle' seçeneğini seçin.");
+        } else {
+          alert("📱 Uygulamayı Telefona Yükleme:\n\nTarayıcınızın menüsünden (sağ üstteki ⋮ simgesi) 'Ana Ekrana Ekle' veya 'Uygulamayı Yükle'yi seçebilirsiniz.");
+        }
+      });
+    }
+
+    window.addEventListener('appinstalled', () => {
+      deferredPrompt = null;
+      if (pwaInstallBtn) pwaInstallBtn.style.display = 'none';
+      showToast('Uygulama başarıyla yüklendi! 📱');
+    });
   }
 
   // Run on ready
