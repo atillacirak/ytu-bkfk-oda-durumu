@@ -6,6 +6,29 @@
 (function () {
   'use strict';
 
+  // Cookie Helpers (YK PIN kalıcı çerez yönetimi)
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      try {
+        return decodeURIComponent(parts.pop().split(';').shift());
+      } catch {
+        return parts.pop().split(';').shift();
+      }
+    }
+    return '';
+  }
+
+  function setCookie(name, value, days = 365) {
+    const maxAge = days * 24 * 60 * 60;
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+  }
+
+  function deleteCookie(name) {
+    document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax`;
+  }
+
   // State
   let currentStatus = {
     isOpen: true,
@@ -13,7 +36,7 @@
     updatedAt: new Date().toISOString()
   };
 
-  let adminPin = localStorage.getItem('bkfk_admin_pin') || '';
+  let adminPin = getCookie('bkfk_admin_pin') || localStorage.getItem('bkfk_admin_pin') || '';
   let eventSource = null;
   let timeAgoTicker = null;
 
@@ -278,11 +301,17 @@
 
       if (data.success) {
         adminPin = pin;
+        setCookie('bkfk_admin_pin', pin, 365);
         localStorage.setItem('bkfk_admin_pin', pin);
         if (pinDialog.open) pinDialog.close();
         showAdminPanel();
         return true;
       } else {
+        if (!showErr) {
+          adminPin = '';
+          deleteCookie('bkfk_admin_pin');
+          localStorage.removeItem('bkfk_admin_pin');
+        }
         if (showErr && pinError) {
           pinError.textContent = 'Hatalı PIN!';
         }
@@ -424,6 +453,7 @@
     if (adminExitBtn) {
       adminExitBtn.addEventListener('click', () => {
         adminPin = '';
+        deleteCookie('bkfk_admin_pin');
         localStorage.removeItem('bkfk_admin_pin');
         window.location.href = '/';
       });

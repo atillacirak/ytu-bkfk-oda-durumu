@@ -89,7 +89,20 @@ function verifyPin(req) {
   const pinHeader = req.headers['x-admin-pin'];
   const pinBody = req.body && req.body.pin;
   const pinQuery = req.query && req.query.pin;
-  const pin = pinHeader || pinBody || pinQuery;
+  
+  let cookiePin = null;
+  if (req.headers.cookie) {
+    const match = req.headers.cookie.match(/(?:^|;\s*)bkfk_admin_pin=([^;]+)/);
+    if (match) {
+      try {
+        cookiePin = decodeURIComponent(match[1]);
+      } catch {
+        cookiePin = match[1];
+      }
+    }
+  }
+
+  const pin = pinHeader || pinBody || pinQuery || cookiePin;
   return pin && String(pin).trim() === String(ADMIN_PIN).trim();
 }
 
@@ -108,6 +121,8 @@ app.get('/api/status', (req, res) => {
 app.post('/api/verify-pin', (req, res) => {
   const isValid = verifyPin(req);
   if (isValid) {
+    const pin = (req.body && req.body.pin) || req.headers['x-admin-pin'] || ADMIN_PIN;
+    res.setHeader('Set-Cookie', `bkfk_admin_pin=${encodeURIComponent(pin)}; Path=/; Max-Age=31536000; SameSite=Lax`);
     res.json({ success: true, message: 'YK Kimlik Doğrulaması Başarılı' });
   } else {
     res.status(401).json({ success: false, message: 'Geçersiz YK PIN Kodu' });
