@@ -131,35 +131,23 @@
 
     // 1. Oda Açık mı / Kapalı mı?
     if (isOpen) {
-      statusCard.className = 'status-card state-open';
       statusBanner.className = 'status-banner is-open';
-      statusText.textContent = 'ODA AÇIK';
-
-      if (occupancy === 'full') {
-        ambientGlow.className = 'ambient-glow glow-full';
-      } else {
-        ambientGlow.className = 'ambient-glow';
-      }
+      statusText.textContent = '❖ ODA AÇIK ❖';
     } else {
-      statusCard.className = 'status-card state-closed';
       statusBanner.className = 'status-banner is-closed';
-      statusText.textContent = 'ODA KAPALI';
-      ambientGlow.className = 'ambient-glow glow-closed';
+      statusText.textContent = '❖ ODA KAPALI ❖';
     }
 
     // 2. Doluluk Durumu (Yer Var mı / Doldu mu?)
     if (!isOpen) {
       occupancyPill.className = 'occupancy-pill is-closed-pill';
-      occIcon.textContent = '🔒';
-      occText.textContent = 'Oda Şuan Kapalı';
+      if (occText) occText.textContent = 'Oda Şuan Kapalı';
     } else if (occupancy === 'full') {
       occupancyPill.className = 'occupancy-pill is-full';
-      occIcon.textContent = '⚠️';
-      occText.textContent = 'DOLDU (Yer Kalmadı)';
+      if (occText) occText.textContent = '✦ DOLDU (Yer Kalmadı) ✦';
     } else {
       occupancyPill.className = 'occupancy-pill has-space';
-      occIcon.textContent = '🟢';
-      occText.textContent = 'YER VAR';
+      if (occText) occText.textContent = '✦ YER VAR ✦';
     }
 
     // 3. Son Güncelleme
