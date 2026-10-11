@@ -5,12 +5,12 @@
    ========================================================================== */
 
 :root {
-  --bg-pure: #070708;
-  --panel-bg: #0d0d0f;
-  --gold-primary: #c5a059;
+  --bg-pure: #080503;
+  --panel-bg: #0d0a07;
+  --gold-primary: #dbab51;
   --gold-light: #e8d098;
   --gold-dim: #735e34;
-  --gold-border: rgba(197, 160, 89, 0.35);
+  --gold-border: rgba(219, 171, 81, 0.35);
   --text-ivory: #f5f2eb;
   --text-muted: #8a857b;
 
@@ -43,6 +43,7 @@ html, body {
   background-color: var(--bg-pure);
   color: var(--text-ivory);
   font-family: var(--font-text);
+  font-size: 18px;
   overflow-x: hidden;
 }
 
@@ -178,9 +179,11 @@ body {
 .occupancy-pill {
   width: 100%;
   max-width: 380px;
-  padding: 0.75rem 1.25rem;
+  height: 54px;
+  padding: 17px;
+  margin-bottom: 4px;
   border-radius: 6px;
-  font-size: 0.95rem;
+  font-size: 19px;
   font-weight: 600;
   letter-spacing: 0.08em;
   display: flex;
@@ -220,15 +223,18 @@ body {
 }
 
 .location-btn {
-  width: 100%;
+  width: 303px;
+  max-width: 303px;
+  height: 51px;
+  padding: 0px;
+  margin-bottom: 14px;
+  background-color: #120c02;
+  border: 1px solid #dbab51;
+  border-radius: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  padding: 0.9rem 1.25rem;
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--gold-border);
-  border-radius: 8px;
   color: var(--text-ivory);
   text-decoration: none;
   font-family: var(--font-text);
@@ -238,8 +244,8 @@ body {
 }
 
 .location-btn:hover {
-  background-color: rgba(197, 160, 89, 0.12);
-  border-color: var(--gold-primary);
+  background-color: #1c1404;
+  border-color: #f0c36d;
   color: #ffffff;
 }
 
