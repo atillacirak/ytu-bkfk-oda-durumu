@@ -643,8 +643,13 @@
 
   function updateBgColor(val) {
     setStyleProperty('background-color', val);
+    if (selectedElement) {
+      selectedElement.style.setProperty('background-image', `linear-gradient(180deg, ${val} 0%, ${val} 100%)`, 'important');
+    }
     if (selectedElement === document.body || (selectedElement && selectedElement.id === 'main-container')) {
       document.documentElement.style.setProperty('--bg-pure', val);
+      document.documentElement.style.setProperty('background-color', val, 'important');
+      document.documentElement.style.setProperty('background-image', `linear-gradient(180deg, ${val} 0%, ${val} 100%)`, 'important');
     }
   }
 

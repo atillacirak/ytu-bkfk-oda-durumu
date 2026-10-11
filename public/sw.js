@@ -1,5 +1,5 @@
 // YTÜ BKFK - Progressive Web App (PWA) Service Worker
-const CACHE_NAME = 'bkfk-oda-v5';
+const CACHE_NAME = 'bkfk-oda-v6';
 const STATIC_ASSETS = [
   '/',
   '/css/style.css',
